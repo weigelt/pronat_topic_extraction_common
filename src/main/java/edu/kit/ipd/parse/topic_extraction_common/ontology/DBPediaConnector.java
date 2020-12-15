@@ -19,12 +19,15 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jan Keim
  *
  */
 public class DBPediaConnector implements ResourceConnector {
+	private static final Logger logger = LoggerFactory.getLogger(DBPediaConnector.class);
 
 	public static final String DEFAULT_SERVICE_URL = "http://dbpedia.org/sparql";
 	private final String serviceUrl;
@@ -84,7 +87,7 @@ public class DBPediaConnector implements ResourceConnector {
 		List<String> retList = new ArrayList<>();
 		final URL fileURL = DBPediaConnector.class.getResource("/stopwords.txt");
 		try (Stream<String> lines = Files.lines(Paths.get(fileURL.toURI()))) {
-			retList = lines.map(s -> s.replaceAll("\"", "")).collect(Collectors.toList());
+			retList = lines.map(s -> s.replace("\"", "")).collect(Collectors.toList());
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -94,7 +97,7 @@ public class DBPediaConnector implements ResourceConnector {
 	@Override
 	public Optional<String> getResourceStringFor(String queryLabel) {
 		Objects.requireNonNull(queryLabel);
-		String queryString = String.format(this.getBaseDbrString(), queryLabel);
+		String queryString = String.format(this.getBaseDbrString(), queryLabel.replace("'", " "));
 
 		String retString = null;
 		try (QueryExecution qexec = this.createQueryExecution(queryString)) {
@@ -108,7 +111,10 @@ public class DBPediaConnector implements ResourceConnector {
 					break;
 				}
 			}
-			qexec.close();
+		} catch (final Exception e) {
+			logger.warn("Could not get resource string for \"{}\"", queryLabel);
+			logger.debug("Used Query: \n{}", queryString);
+			logger.warn(e.getMessage(), e.getCause());
 		}
 
 		if (Objects.nonNull(retString)) {
@@ -121,7 +127,6 @@ public class DBPediaConnector implements ResourceConnector {
 					final QuerySolution soln = results.nextSolution();
 					retString = soln.get("res").toString();
 				}
-				qexec.close();
 			}
 		}
 		return Optional.ofNullable(retString);
@@ -141,7 +146,6 @@ public class DBPediaConnector implements ResourceConnector {
 				final String uri = soln.get("uri").toString();
 				retSet.add(uri);
 			}
-			qexec.close();
 		}
 
 		return retSet;
@@ -152,20 +156,14 @@ public class DBPediaConnector implements ResourceConnector {
 	}
 
 	protected boolean checkLabelWithQuery(String label, String queryLabel) {
-		label = label.replaceAll("\"", "");
+		label = label.replace("\"", "");
 		label = label.replace("@en", "");
 		if (label.equals(queryLabel)) {
 			// completely equal
 			return true;
 		} else if (label.equalsIgnoreCase(queryLabel)) {
 			// ignoring case equal
-			if (label.matches("^[\\p{Lu}]{2,}.*")) {
-				// is "all-uppercase" (at least 2 uppercase characters
-				return false;
-			} else {
-				// only first character uppercase
-				return true;
-			}
+			return !(label.matches("^[\\p{Lu}]{2,}.*"));
 		}
 		return false;
 	}
@@ -186,7 +184,6 @@ public class DBPediaConnector implements ResourceConnector {
 					retSet.add(uri);
 				}
 			}
-			qexec.close();
 		}
 
 		return retSet;
@@ -200,7 +197,7 @@ public class DBPediaConnector implements ResourceConnector {
 	@Override
 	public String getLabelForResourceSimple(String dbResource) {
 		final String cleaner = dbResource.replaceAll("http:\\/\\/[\\w\\.]+(\\/\\w*)?\\/(\\w+:)?([\\w\\(\\)]+)", "$3");
-		return cleaner.replaceAll("_", " ");
+		return cleaner.replace("_", " ");
 	}
 
 	@Override
@@ -214,10 +211,9 @@ public class DBPediaConnector implements ResourceConnector {
 			while (results.hasNext()) {
 				final QuerySolution soln = results.nextSolution();
 				final String label = soln.get("label").toString();
-				retString = label.replaceAll("\"", "").replace("@en", "");
+				retString = label.replace("\"", "").replace("@en", "");
 				break;
 			}
-			qexec.close();
 		}
 
 		return Optional.ofNullable(retString);
@@ -256,7 +252,6 @@ public class DBPediaConnector implements ResourceConnector {
 	 */
 	protected String getBaseRelatedString() {
 		return baseRelatedString;
-		// return baseRelatedString_paper;
 	}
 
 	/**

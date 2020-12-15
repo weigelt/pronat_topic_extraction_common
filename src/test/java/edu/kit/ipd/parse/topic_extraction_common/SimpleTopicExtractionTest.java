@@ -84,12 +84,12 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("obstacle");
 		wordSenses.add("trail");
 		wordSenses.add("gate");
-		// "finish" (from "finish line")
 		wordSenses.add("line (geometry)");
 		wordSenses.add("earth's surface"); // for ground
 		this.test(wordSenses, "drone1.1");
 	}
 
+	@Ignore
 	@Test
 	public void testDroneOneTwo() {
 		final List<String> wordSenses = new ArrayList<>();
@@ -97,7 +97,6 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("gate");
 		wordSenses.add("obstacle");
 		wordSenses.add("gate");
-		// "finish" (from "finish line")
 		wordSenses.add("line (geometry)");
 		wordSenses.add("line (geometry)");
 		wordSenses.add("earth's surface"); // for ground

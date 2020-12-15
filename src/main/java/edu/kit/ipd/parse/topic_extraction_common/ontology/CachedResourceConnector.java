@@ -38,7 +38,7 @@ public class CachedResourceConnector implements ResourceConnector {
 			this.data.store();
 			return result;
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e.getCause());
 			return Optional.empty();
 		}
 	}
@@ -55,7 +55,7 @@ public class CachedResourceConnector implements ResourceConnector {
 			this.data.store();
 			return result;
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e.getCause());
 			return new HashSet<>();
 		}
 	}
@@ -72,7 +72,7 @@ public class CachedResourceConnector implements ResourceConnector {
 			this.data.store();
 			return result;
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e.getCause());
 			return Optional.empty();
 		}
 	}
@@ -89,7 +89,7 @@ public class CachedResourceConnector implements ResourceConnector {
 			this.data.store();
 			return result;
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e.getCause());
 			return null;
 		}
 	}
@@ -106,7 +106,7 @@ public class CachedResourceConnector implements ResourceConnector {
 			this.data.store();
 			return result;
 		} catch (final Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e.getCause());
 			return new HashSet<>();
 		}
 	}
