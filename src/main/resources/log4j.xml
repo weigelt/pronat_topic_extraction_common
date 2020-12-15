@@ -9,7 +9,7 @@
 	   </layout>
 	 </appender>
 
-	<logger name="im.janke.topicExtractionCommon">
+	<logger name="edu.kit.ipd.parse.topic_extraction_common">
 		<level value="debug"></level>
 	</logger>
 	<logger name="org.apache">
