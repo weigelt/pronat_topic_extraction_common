@@ -25,20 +25,17 @@ import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
  *
  */
 public class DBPediaConnector implements ResourceConnector {
-	// private static final Logger logger =
-	// LoggerFactory.getLogger(TopicGraph.class);
 
-	public static final String	DEFAULT_SERVICE_URL	= "http://dbpedia.org/sparql";
-	private final String		serviceUrl;
-	private static final String	baseDbrString		= "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-			+ "PREFIX bif: <bif:>\n" + "SELECT DISTINCT ?res ?label WHERE {" + "?res rdfs:label ?label . "
-			+ "FILTER (lang(?label) = 'en') . " + "?label bif:contains '\"%s\"' .} ORDER BY (strlen(?label)) LIMIT 21";
+	public static final String DEFAULT_SERVICE_URL = "http://dbpedia.org/sparql";
+	private final String serviceUrl;
+	private static final String baseDbrString = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + "PREFIX bif: <bif:>\n"
+			+ "SELECT DISTINCT ?res ?label WHERE {" + "?res rdfs:label ?label . " + "FILTER (lang(?label) = 'en') . "
+			+ "?label bif:contains '\"%s\"' .} ORDER BY (strlen(?label)) LIMIT 21";
 
 	private static final String baseRelatedString = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 			+ "PREFIX dbo: <http://dbpedia.org/ontology/>\n" + "PREFIX purlg: <http://purl.org/linguistics/gold/>\n"
 			+ "PREFIX purl: <http://purl.org/dc/terms/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
-			+ "SELECT DISTINCT ?uri WHERE { VALUES ?s {<%s>}\n"
-			+ "  {?s purl:subject ?uri} UNION\n  {?uri purl:subject ?s} UNION\n"
+			+ "SELECT DISTINCT ?uri WHERE { VALUES ?s {<%s>}\n" + "  {?s purl:subject ?uri} UNION\n  {?uri purl:subject ?s} UNION\n"
 			+ "  {?s purlg:hypernym ?uri} UNION\n  {?uri purlg:hypernym ?s} UNION\n"
 			+ "  {?s purlg:meronym ?uri} UNION\n  {?uri purlg:meronym ?s} UNION\n"
 			+ "  {?s purlg:synonym ?uri} UNION\n  {?uri purlg:synonym ?s} UNION\n"
@@ -46,20 +43,15 @@ public class DBPediaConnector implements ResourceConnector {
 			+ "  {?s rdfs:seeAlso ?uri} UNION\n  {?uri rdfs:seeAlso ?s} UNION\n"
 			+ "  {?s rdfs:subClassOf ?uri} UNION\n {?uri rdfs:subClassOf ?s} UNION\n"
 			+ "  {?s skos:broader ?uri} UNION\n  {?uri skos:broader ?s} UNION\n"
-			+ "  {?uri skos:broaderOf ?s} UNION\n  {?s skos:broaderOf ?uri} UNION\n"
-			+ "  {?s skos:narrower ?uri} UNION\n" + "  {?uri skos:narrower ?s}"
-			+ " . FILTER NOT EXISTS { {?uri rdf:type <http://schema.org/CreativeWork>}"
+			+ "  {?uri skos:broaderOf ?s} UNION\n  {?s skos:broaderOf ?uri} UNION\n" + "  {?s skos:narrower ?uri} UNION\n"
+			+ "  {?uri skos:narrower ?s}" + " . FILTER NOT EXISTS { {?uri rdf:type <http://schema.org/CreativeWork>}"
 			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Work>}"
 			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/MusicalWork>}"
 			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/WrittenWork>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Album>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Book>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Song>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Single>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Person>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Group>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Band>}"
-			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Agent>}"
+			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Album>}" + " UNION {?uri rdf:type <http://dbpedia.org/ontology/Book>}"
+			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Song>}" + " UNION {?uri rdf:type <http://dbpedia.org/ontology/Single>}"
+			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Person>}" + " UNION {?uri rdf:type <http://dbpedia.org/ontology/Group>}"
+			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Band>}" + " UNION {?uri rdf:type <http://dbpedia.org/ontology/Agent>}"
 			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Organisation>}"
 			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Company>}"
 			+ " UNION {?uri rdf:type <http://dbpedia.org/ontology/Place>}}}";
@@ -67,17 +59,17 @@ public class DBPediaConnector implements ResourceConnector {
 	private static final String baseRelatedString_paper = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
 			+ "PREFIX dcterms: <http://purl.org/dc/terms/>\n" + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
 			+ "SELECT DISTINCT ?uri\n" + "WHERE {\n" + "  VALUES ?s {<http://dbpedia.org/resource/Refrigerator>}\n"
-			+ "  {?s skos:broader ?uri} UNION\n" + "  {?s skos:broaderOf ?uri} UNION\n"
-			+ "  {?s rdfs:subClassOf ?uri} UNION\n" + "  {?s rdfs:type ?uri} UNION\n" + "  {?s dcterms:subject ?uri}}";
+			+ "  {?s skos:broader ?uri} UNION\n" + "  {?s skos:broaderOf ?uri} UNION\n" + "  {?s rdfs:subClassOf ?uri} UNION\n"
+			+ "  {?s rdfs:type ?uri} UNION\n" + "  {?s dcterms:subject ?uri}}";
 
 	private static final String baseLabelQuery = "SELECT DISTINCT ?label WHERE { <%s> rdfs:label ?label . FILTER (lang(?label) = 'en')}";
 
 	private static final String baseRedirectQuery = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT DISTINCT ?uri WHERE { VALUES ?s {<%s>} .\n"
 			+ "{?uri dbo:wikiPageRedirects ?s} UNION {?s dbo:wikiPageRedirects ?uri}}";
 
-	private List<String> stopwords = Arrays.asList("Articles containing", " national ", " brands", "Companies ",
-			" manufacturers", " competitions", " inventions", "Articles ", "Article Wizard", " companies", " of the",
-			"History of ", " GmbH", "Lists of", "List of", "Form", " introduced in ", " by type");
+	private List<String> stopwords = Arrays.asList("Articles containing", " national ", " brands", "Companies ", " manufacturers",
+			" competitions", " inventions", "Articles ", "Article Wizard", " companies", " of the", "History of ", " GmbH", "Lists of",
+			"List of", "Form", " introduced in ", " by type");
 
 	public DBPediaConnector() {
 		this(DEFAULT_SERVICE_URL);
@@ -85,12 +77,12 @@ public class DBPediaConnector implements ResourceConnector {
 
 	public DBPediaConnector(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
-		stopwords = loadStopwords();
+		this.stopwords = this.loadStopwords();
 	}
 
 	private List<String> loadStopwords() {
 		List<String> retList = new ArrayList<>();
-		URL fileURL = DBPediaConnector.class.getResource("/stopwords.txt");
+		final URL fileURL = DBPediaConnector.class.getResource("/stopwords.txt");
 		try (Stream<String> lines = Files.lines(Paths.get(fileURL.toURI()))) {
 			retList = lines.map(s -> s.replaceAll("\"", "")).collect(Collectors.toList());
 		} catch (IOException | URISyntaxException e) {
@@ -102,16 +94,16 @@ public class DBPediaConnector implements ResourceConnector {
 	@Override
 	public Optional<String> getResourceStringFor(String queryLabel) {
 		Objects.requireNonNull(queryLabel);
-		String queryString = String.format(getBaseDbrString(), queryLabel);
+		String queryString = String.format(this.getBaseDbrString(), queryLabel);
 
 		String retString = null;
-		try (QueryExecution qexec = createQueryExecution(queryString)) {
-			ResultSet results = qexec.execSelect();
+		try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
-				QuerySolution soln = results.nextSolution();
-				String res = soln.get("res").toString();
-				String label = soln.get("label").toString();
-				if (checkLabelWithQuery(label, queryLabel) && checkResource(res)) {
+				final QuerySolution soln = results.nextSolution();
+				final String res = soln.get("res").toString();
+				final String label = soln.get("label").toString();
+				if (this.checkLabelWithQuery(label, queryLabel) && this.checkResource(res)) {
 					retString = res;
 					break;
 				}
@@ -123,10 +115,10 @@ public class DBPediaConnector implements ResourceConnector {
 			// get the page the page is redirected to
 			queryString = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT DISTINCT ?res WHERE { <%s> dbo:wikiPageRedirects ?res}";
 			queryString = String.format(queryString, retString);
-			try (QueryExecution qexec = createQueryExecution(queryString)) {
-				ResultSet results = qexec.execSelect();
+			try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+				final ResultSet results = qexec.execSelect();
 				if (results.hasNext()) {
-					QuerySolution soln = results.nextSolution();
+					final QuerySolution soln = results.nextSolution();
 					retString = soln.get("res").toString();
 				}
 				qexec.close();
@@ -138,15 +130,15 @@ public class DBPediaConnector implements ResourceConnector {
 	@Override
 	public Set<String> getEquivalentResources(String resource) {
 		Objects.nonNull(resource);
-		Set<String> retSet = new HashSet<>();
+		final Set<String> retSet = new HashSet<>();
 
-		String queryString = String.format(DBPediaConnector.getBaseRedirectQuery(), resource);
+		final String queryString = String.format(DBPediaConnector.getBaseRedirectQuery(), resource);
 
-		try (QueryExecution qexec = createQueryExecution(queryString)) {
-			ResultSet results = qexec.execSelect();
+		try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
-				QuerySolution soln = results.nextSolution();
-				String uri = soln.get("uri").toString();
+				final QuerySolution soln = results.nextSolution();
+				final String uri = soln.get("uri").toString();
 				retSet.add(uri);
 			}
 			qexec.close();
@@ -181,16 +173,16 @@ public class DBPediaConnector implements ResourceConnector {
 	@Override
 	public Set<String> getRelatedFor(String dbResource) {
 		Objects.requireNonNull(dbResource);
-		Set<String> retSet = new HashSet<>();
+		final Set<String> retSet = new HashSet<>();
 
-		String queryString = String.format(getBaseRelatedString(), dbResource);
+		final String queryString = String.format(this.getBaseRelatedString(), dbResource);
 
-		try (QueryExecution qexec = createQueryExecution(queryString)) {
-			ResultSet results = qexec.execSelect();
+		try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
-				QuerySolution soln = results.nextSolution();
-				String uri = soln.get("uri").toString();
-				if (checkURI(uri)) {
+				final QuerySolution soln = results.nextSolution();
+				final String uri = soln.get("uri").toString();
+				if (this.checkURI(uri)) {
 					retSet.add(uri);
 				}
 			}
@@ -202,12 +194,12 @@ public class DBPediaConnector implements ResourceConnector {
 
 	private boolean checkURI(String uri) {
 		return uri.startsWith("http://dbpedia.org/resource") && !uri.contains("File:") && !uri.contains("Wikt:")
-				&& isNoStopWord(getLabelForResourceSimple(uri));
+				&& this.isNoStopWord(this.getLabelForResourceSimple(uri));
 	}
 
 	@Override
 	public String getLabelForResourceSimple(String dbResource) {
-		String cleaner = dbResource.replaceAll("http:\\/\\/[\\w\\.]+(\\/\\w*)?\\/(\\w+:)?([\\w\\(\\)]+)", "$3");
+		final String cleaner = dbResource.replaceAll("http:\\/\\/[\\w\\.]+(\\/\\w*)?\\/(\\w+:)?([\\w\\(\\)]+)", "$3");
 		return cleaner.replaceAll("_", " ");
 	}
 
@@ -216,12 +208,12 @@ public class DBPediaConnector implements ResourceConnector {
 		Objects.requireNonNull(dbResource);
 		String retString = "";
 
-		String query = String.format(baseLabelQuery, dbResource);
-		try (QueryExecution qexec = createQueryExecution(query)) {
-			ResultSet results = qexec.execSelect();
+		final String query = String.format(baseLabelQuery, dbResource);
+		try (QueryExecution qexec = this.createQueryExecution(query)) {
+			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
-				QuerySolution soln = results.nextSolution();
-				String label = soln.get("label").toString();
+				final QuerySolution soln = results.nextSolution();
+				final String label = soln.get("label").toString();
 				retString = label.replaceAll("\"", "").replace("@en", "");
 				break;
 			}
@@ -232,7 +224,7 @@ public class DBPediaConnector implements ResourceConnector {
 	}
 
 	protected QueryExecution createQueryExecution(String queryString) {
-		QueryEngineHTTP qe = new QueryEngineHTTP(serviceUrl, queryString);
+		final QueryEngineHTTP qe = new QueryEngineHTTP(this.serviceUrl, queryString);
 		qe.addParam("timeout", "30000");
 		return qe;
 	}
@@ -243,7 +235,7 @@ public class DBPediaConnector implements ResourceConnector {
 			return false;
 		}
 		// check for stopwords defined
-		for (String stopword : stopwords) {
+		for (final String stopword : this.stopwords) {
 			if (label.contains(stopword)) {
 				// is in the s
 				return false;

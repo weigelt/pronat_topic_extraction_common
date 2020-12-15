@@ -23,6 +23,7 @@ import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.graph.INode;
 import edu.kit.ipd.parse.topic_extraction_common.graph.TopicGraph;
 import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
+import edu.kit.ipd.parse.topic_extraction_common.ontology.CachedResourceConnector;
 import edu.kit.ipd.parse.topic_extraction_common.ontology.DBPediaConnector;
 import edu.kit.ipd.parse.topic_extraction_common.ontology.ResourceConnector;
 
@@ -49,21 +50,19 @@ public class TopicExtractionCore {
 	/** Cache to speed up creating sense graphs */
 	private final HashMap<String, TopicGraph> graphCache;
 
-	private ResourceConnector resourceConnector;
+	private final ResourceConnector resourceConnector;
 
 	public TopicExtractionCore() {
-		this.graphCache = new HashMap<>();
-		this.numTopics = -1;
-		this.resourceConnector = new DBPediaConnector(DBPediaConnector.DEFAULT_SERVICE_URL);
+		this(DBPediaConnector.DEFAULT_SERVICE_URL);
 	}
 
 	public TopicExtractionCore(String url) {
-		this();
-		this.resourceConnector = new DBPediaConnector(url);
+		this(new CachedResourceConnector(new DBPediaConnector(url)));
 	}
 
 	public TopicExtractionCore(ResourceConnector ressourceConnector) {
-		this();
+		this.graphCache = new HashMap<>();
+		this.numTopics = -1;
 		this.resourceConnector = ressourceConnector;
 	}
 
