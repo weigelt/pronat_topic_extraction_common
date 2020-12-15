@@ -12,41 +12,27 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.ipd.parse.luna.agent.AbstractAgent;
-import edu.kit.ipd.parse.luna.data.MissingDataException;
-import edu.kit.ipd.parse.luna.data.PrePipelineData;
 import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.graph.INode;
-import edu.kit.ipd.parse.luna.graph.INodeType;
-import edu.kit.ipd.parse.luna.tools.ConfigManager;
 import edu.kit.ipd.parse.topic_extraction_common.graph.TopicGraph;
 import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
 import edu.kit.ipd.parse.topic_extraction_common.ontology.DBPediaConnector;
-import edu.kit.ipd.parse.topic_extraction_common.ontology.OfflineDBPediaConnector;
 import edu.kit.ipd.parse.topic_extraction_common.ontology.ResourceConnector;
 
 /**
  * @author Jan Keim
  *
  */
-@MetaInfServices(AbstractAgent.class)
-public class TopicExtractionCommon extends AbstractAgent {
-	private static final Logger logger = LoggerFactory.getLogger(TopicExtractionCommon.class);
-	private static final String ID = "TopicExtraction";
-	private static final String TOKEN_NODE_TYPE = "token";
-	private static final String POS_ATTRIBUTE = "pos";
-	private static final String NER_ATTRIBUTE = "ner";
-	private static final String WSD_ATTRIBUTE = "wsd";
+public class TopicExtractionCore {
+	private static final String ERR_NO_TOPICS_IN_GRAPH = "Topics are not annotated to the graph.";
+	private static final Logger logger = LoggerFactory.getLogger(TopicExtractionCore.class);
 	public static final String TOPIC_ATTRIBUTE = "topic";
 	public static final String TOPICS_NODE_TYPE = "topics";
 
@@ -61,44 +47,24 @@ public class TopicExtractionCommon extends AbstractAgent {
 	private int timeoutSecondHop = 60 * 4; // 4 Minutes
 
 	/** Cache to speed up creating sense graphs */
-	private HashMap<String, TopicGraph> graphCache;
+	private final HashMap<String, TopicGraph> graphCache;
 
 	private ResourceConnector resourceConnector;
 
-	@Override
-	public void init() {
-		this.setId(TopicExtractionCommon.ID);
-
+	public TopicExtractionCore() {
 		this.graphCache = new HashMap<>();
+		this.numTopics = -1;
+		this.resourceConnector = new DBPediaConnector(DBPediaConnector.DEFAULT_SERVICE_URL);
+	}
 
-		final Properties props = ConfigManager.getConfiguration(this.getClass());
-		final String offline = props.getProperty("OFFLINE_USE");
-		if ((offline == null) || offline.isEmpty() || offline.equals("N")) {
-			String url = props.getProperty("URL", DBPediaConnector.DEFAULT_SERVICE_URL);
-			if (url.isEmpty()) {
-				url = DBPediaConnector.DEFAULT_SERVICE_URL;
-			}
-			this.resourceConnector = new DBPediaConnector(url);
-		} else {
-			if (TopicExtractionCommon.logger.isInfoEnabled()) {
-				TopicExtractionCommon.logger.info("Using offline version for resource connection.");
-			}
-			final String owl = props.getProperty("OWL");
-			if ((owl == null) || owl.isEmpty()) {
-				throw new IllegalArgumentException("Could not load proper owl file from properties configuration.");
-			}
-			final String turtle1 = props.getProperty("TURTLE1");
-			final String turtle2 = props.getProperty("TURTLE2");
-			final String turtle3 = props.getProperty("TURTLE3");
-			final String turtle4 = props.getProperty("TURTLE4");
-			this.resourceConnector = new OfflineDBPediaConnector(owl, turtle1, turtle2, turtle3, turtle4);
-		}
-		try {
-			this.numTopics = Integer.parseInt(props.getProperty("TOPICS", "-1"));
-		} catch (final NumberFormatException e) {
-			TopicExtractionCommon.logger.warn("Could not parse provided number for amount of topics. Use default instead.");
-			this.numTopics = -1;
-		}
+	public TopicExtractionCore(String url) {
+		this();
+		this.resourceConnector = new DBPediaConnector(url);
+	}
+
+	public TopicExtractionCore(ResourceConnector ressourceConnector) {
+		this();
+		this.resourceConnector = ressourceConnector;
 	}
 
 	/**
@@ -157,58 +123,6 @@ public class TopicExtractionCommon extends AbstractAgent {
 		return this.topicSelectionMethod;
 	}
 
-	private void prepareGraph() {
-		// add graph attribute
-		INodeType tokenType;
-		if (this.graph.hasNodeType(TopicExtractionCommon.TOPICS_NODE_TYPE)) {
-			tokenType = this.graph.getNodeType(TopicExtractionCommon.TOPICS_NODE_TYPE);
-		} else {
-			tokenType = this.graph.createNodeType(TopicExtractionCommon.TOPICS_NODE_TYPE);
-		}
-		if (!tokenType.containsAttribute(TopicExtractionCommon.TOPIC_ATTRIBUTE, "java.util.List")) {
-			tokenType.addAttributeToType("java.util.List", TopicExtractionCommon.TOPIC_ATTRIBUTE);
-		}
-	}
-
-	@Override
-	protected synchronized void exec() {
-		this.prepareGraph();
-		final List<INode> nodes = this.getNodes();
-		final Map<INode, String> nodeToWSD = new HashMap<>();
-		for (final INode node : nodes) {
-			final String pos = node.getAttributeValue(TopicExtractionCommon.POS_ATTRIBUTE).toString();
-			if (pos.startsWith("NN")) {
-				if (this.nodeIsNamedEntity(node)) {
-					continue;
-				}
-				final String wsd = Objects.toString(node.getAttributeValue(TopicExtractionCommon.WSD_ATTRIBUTE));
-				if (!wsd.equals("null")) {
-					nodeToWSD.put(node, wsd);
-				}
-			}
-		}
-		final List<Topic> topics = this.getTopicsForSenses(nodeToWSD.values());
-
-		this.addTopicsToInputGraph(topics);
-
-		if (TopicExtractionCommon.logger.isDebugEnabled()) {
-			final List<Topic> retrievedTopics = TopicExtractionCommon.getTopicsFromIGraph(this.graph);
-			TopicExtractionCommon.logger.debug("Retrieved " + retrievedTopics.size() + " topics:");
-			for (final Topic t : retrievedTopics) {
-				TopicExtractionCommon.logger.debug(t.getLabel() + " (" + String.join(", ", t.getRelatedSenses()) + ")");
-			}
-		}
-	}
-
-	public void exec(PrePipelineData ppd) {
-		try {
-			this.graph = ppd.getGraph();
-		} catch (final MissingDataException e) {
-			e.printStackTrace();
-		}
-		this.exec();
-	}
-
 	/**
 	 * Extracts topics out of the provided {@link IGraph}. Throws an
 	 * {@link IllegalArgumentException} if no topics are annotated
@@ -218,20 +132,20 @@ public class TopicExtractionCommon extends AbstractAgent {
 	 * @return List of {@link Topic}s that were annotated to the graph
 	 */
 	public static List<Topic> getTopicsFromIGraph(IGraph inputGraph) {
-		if (!inputGraph.hasNodeType(TopicExtractionCommon.TOPICS_NODE_TYPE)) {
-			throw new IllegalArgumentException("Topics are not annotated to the graph.");
+		if (!inputGraph.hasNodeType(TopicExtractionCore.TOPICS_NODE_TYPE)) {
+			throw new IllegalArgumentException(ERR_NO_TOPICS_IN_GRAPH);
 		}
-		final List<INode> nodesList = inputGraph.getNodesOfType(inputGraph.getNodeType(TopicExtractionCommon.TOPICS_NODE_TYPE));
+		final List<INode> nodesList = inputGraph.getNodesOfType(inputGraph.getNodeType(TopicExtractionCore.TOPICS_NODE_TYPE));
 		if ((nodesList == null) || nodesList.isEmpty()) {
-			throw new IllegalArgumentException("Topics are not annotated to the graph.");
+			throw new IllegalArgumentException(ERR_NO_TOPICS_IN_GRAPH);
 		}
 		final INode node = nodesList.get(0);
 		if (node == null) {
-			throw new IllegalArgumentException("Topics are not annotated to the graph.");
+			throw new IllegalArgumentException(ERR_NO_TOPICS_IN_GRAPH);
 		}
-		final Object o = node.getAttributeValue(TopicExtractionCommon.TOPIC_ATTRIBUTE);
+		final Object o = node.getAttributeValue(TopicExtractionCore.TOPIC_ATTRIBUTE);
 		if (o == null) {
-			throw new IllegalArgumentException("Topics are not annotated to the graph.");
+			throw new IllegalArgumentException(ERR_NO_TOPICS_IN_GRAPH);
 		}
 
 		final List<Topic> retrievedTopics = new ArrayList<>();
@@ -247,13 +161,9 @@ public class TopicExtractionCommon extends AbstractAgent {
 		return retrievedTopics;
 	}
 
-	private void addTopicsToInputGraph(List<Topic> topics) {
-		final INode node = this.graph.createNode(this.graph.getNodeType(TopicExtractionCommon.TOPICS_NODE_TYPE));
-		node.setAttributeValue(TopicExtractionCommon.TOPIC_ATTRIBUTE, topics);
-	}
-
-	private List<INode> getNodes() {
-		return this.graph.getNodesOfType(this.graph.getNodeType(TopicExtractionCommon.TOKEN_NODE_TYPE));
+	public static void addTopicsToInputGraph(List<Topic> topics, IGraph graph) {
+		final INode node = graph.createNode(graph.getNodeType(TopicExtractionCore.TOPICS_NODE_TYPE));
+		node.setAttributeValue(TopicExtractionCore.TOPIC_ATTRIBUTE, topics);
 	}
 
 	/**
@@ -293,22 +203,33 @@ public class TopicExtractionCommon extends AbstractAgent {
 	public synchronized TopicGraph getTopicGraphForSenses(Collection<String> wordSenses) {
 		final List<TopicGraph> senseGraphs = new ArrayList<>();
 		// create Topic Graph
-		logger.debug("Start creating Graphs for " + String.join(", ", wordSenses));
-		outer: for (final String sense : wordSenses) {
+		if (logger.isDebugEnabled()) {
+			final String senses = String.join(", ", wordSenses);
+			logger.debug("Start creating Graphs for {}", senses);
+		}
+
+		for (final String sense : wordSenses) {
 			final TopicGraph senseGraph = this.createSenseGraphFor(sense);
-			for (final TopicGraph otherSenseGraph : senseGraphs) {
-				if (otherSenseGraph.equals(senseGraph)) {
-					otherSenseGraph.increaseWeights();
-					continue outer;
-				}
+			final boolean senseGraphExistsAlready = this.checkIfSenseGraphExistsAlready(senseGraphs, senseGraph);
+			if (!senseGraphExistsAlready) {
+				senseGraphs.add(senseGraph);
 			}
-			senseGraphs.add(senseGraph);
 		}
 		final TopicGraph topicGraph = TopicGraph.createTopicGraph(senseGraphs);
 		if (logger.isDebugEnabled()) {
-			logger.debug("Graph has " + topicGraph.getVerticesSize() + " nodes and " + topicGraph.getEdgesSize() + " vertices");
+			logger.debug("Graph has {} nodes and {} vertices", topicGraph.getVerticesSize(), topicGraph.getEdgesSize());
 		}
 		return topicGraph;
+	}
+
+	private boolean checkIfSenseGraphExistsAlready(final List<TopicGraph> senseGraphs, final TopicGraph senseGraph) {
+		for (final TopicGraph existingSenseGraph : senseGraphs) {
+			if (existingSenseGraph.equals(senseGraph)) {
+				existingSenseGraph.increaseWeights();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -354,21 +275,15 @@ public class TopicExtractionCommon extends AbstractAgent {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Processed Topics: ");
 			for (final Topic topic : topicList) {
-				logger.debug(topic.getScore() + "   " + topic.getLabel());
+				logger.debug("{}   {}", topic.getScore(), topic.getLabel());
 			}
 		}
 
 		return topicList;
 	}
 
-	private boolean nodeIsNamedEntity(INode node) {
-		// use NER from parse
-		final String nodeString = node.getAttributeValue(TopicExtractionCommon.NER_ATTRIBUTE).toString();
-		return (!nodeString.equals("O") || nodeString.toLowerCase().equals("armar"));
-	}
-
 	private TopicGraph createSenseGraphFor(String word) {
-		logger.debug("Creating SenseGraph for " + word);
+		logger.debug("Creating SenseGraph for {}", word);
 		final TopicGraph retGraph = new TopicGraph();
 		final Optional<String> optWordDBResource = this.resourceConnector.getResourceStringFor(word);
 		if (!optWordDBResource.isPresent()) {
@@ -425,17 +340,16 @@ public class TopicExtractionCommon extends AbstractAgent {
 		// all went fine, save the graph in the cache and return
 		this.graphCache.put(wordFromResource, retGraph);
 		if (logger.isDebugEnabled()) {
-			logger.debug("SenseGraph for " + word + " has " + retGraph.getVerticesSize() + " nodes and " + retGraph.getEdgesSize()
-					+ " vertices");
+			logger.debug("SenseGraph for {} has {} nodes and {} vertices", word, retGraph.getVerticesSize(), retGraph.getEdgesSize());
 		}
 		return retGraph;
 	}
 
 	private TopicGraph handleTimeout(String wordFromResource, TopicGraph tg, String word) {
-		logger.warn("Stopped creation of the SenseGraph for '" + word + "' early due to a timeout");
+		logger.warn("Stopped creation of the SenseGraph for '{}' early due to a timeout", word);
 		this.graphCache.put(wordFromResource, tg);
 		if (logger.isDebugEnabled()) {
-			logger.debug("SenseGraph for " + word + " has " + tg.getVerticesSize() + " nodes and " + tg.getEdgesSize() + " vertices");
+			logger.debug("SenseGraph for {} has {} nodes and {} vertices", word, tg.getVerticesSize(), tg.getEdgesSize());
 		}
 		return tg;
 	}
