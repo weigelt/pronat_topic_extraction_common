@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.graph.INode;
+import edu.kit.ipd.parse.luna.graph.INodeType;
+import edu.kit.ipd.parse.luna.graph.Pair;
 import edu.kit.ipd.parse.topic_extraction_common.graph.TopicGraph;
 import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
 import edu.kit.ipd.parse.topic_extraction_common.ontology.CachedResourceConnector;
@@ -34,8 +37,8 @@ import edu.kit.ipd.parse.topic_extraction_common.ontology.ResourceConnector;
 public class TopicExtractionCore {
 	private static final String ERR_NO_TOPICS_IN_GRAPH = "Topics are not annotated to the graph.";
 	private static final Logger logger = LoggerFactory.getLogger(TopicExtractionCore.class);
-	public static final String TOPIC_ATTRIBUTE = "topic";
-	public static final String TOPICS_NODE_TYPE = "topics";
+	private static final String TOPIC_ATTRIBUTE = "topic";
+	private static final String TOPICS_NODE_TYPE = "topics";
 
 	private int numTopics = -1;
 	private int maxTopics = 8;
@@ -122,6 +125,19 @@ public class TopicExtractionCore {
 		return this.topicSelectionMethod;
 	}
 
+	private static void prepareGraph(IGraph graph) {
+		// add graph attribute
+		INodeType tokenType;
+		if (graph.hasNodeType(TOPICS_NODE_TYPE)) {
+			tokenType = graph.getNodeType(TOPICS_NODE_TYPE);
+		} else {
+			tokenType = graph.createNodeType(TOPICS_NODE_TYPE);
+		}
+		if (!tokenType.containsAttribute(TOPIC_ATTRIBUTE, "java.util.List")) {
+			tokenType.addAttributeToType("java.util.List", TOPIC_ATTRIBUTE);
+		}
+	}
+
 	/**
 	 * Extracts topics out of the provided {@link IGraph}. Throws an
 	 * {@link IllegalArgumentException} if no topics are annotated
@@ -142,18 +158,22 @@ public class TopicExtractionCore {
 		if (node == null) {
 			throw new IllegalArgumentException(ERR_NO_TOPICS_IN_GRAPH);
 		}
-		final Object o = node.getAttributeValue(TopicExtractionCore.TOPIC_ATTRIBUTE);
-		if (o == null) {
+		final Object attributeObject = node.getAttributeValue(TopicExtractionCore.TOPIC_ATTRIBUTE);
+		if (attributeObject == null) {
 			throw new IllegalArgumentException(ERR_NO_TOPICS_IN_GRAPH);
 		}
 
+		return unserializeTopicList(attributeObject);
+	}
+
+	private static List<Topic> unserializeTopicList(final Object attributeObject) {
 		final List<Topic> retrievedTopics = new ArrayList<>();
-		if (o instanceof List) {
-			final List<?> list = (List<?>) o;
-			for (final Object obj : list) {
-				if (obj instanceof Topic) {
-					final Topic t = (Topic) obj;
-					retrievedTopics.add(t);
+		if (attributeObject instanceof List) {
+			final List<?> list = (List<?>) attributeObject;
+			for (final Object serializedTopic : list) {
+				final Topic topic = unserializeTopicFromGraph(serializedTopic);
+				if (topic != null) {
+					retrievedTopics.add(topic);
 				}
 			}
 		}
@@ -161,8 +181,39 @@ public class TopicExtractionCore {
 	}
 
 	public static void addTopicsToInputGraph(List<Topic> topics, IGraph graph) {
+		prepareGraph(graph);
 		final INode node = graph.createNode(graph.getNodeType(TopicExtractionCore.TOPICS_NODE_TYPE));
-		node.setAttributeValue(TopicExtractionCore.TOPIC_ATTRIBUTE, topics);
+		final List<Pair<String, Double>> serializedTopics = transformTopicListForSerialization(topics);
+		node.setAttributeValue(TopicExtractionCore.TOPIC_ATTRIBUTE, serializedTopics);
+	}
+
+	private static List<Pair<String, Double>> transformTopicListForSerialization(List<Topic> topics) {
+		return topics.stream().map(TopicExtractionCore::serializeTopicForGraph).collect(Collectors.toUnmodifiableList());
+	}
+
+	private static Pair<String, Double> serializeTopicForGraph(Topic topic) {
+		return new Pair<>(topic.getLabel(), topic.getScore());
+	}
+
+	private static Topic unserializeTopicFromGraph(Object serializedTopic) {
+		if (Objects.isNull(serializedTopic) || !(serializedTopic instanceof Pair)) {
+			return null;
+		}
+		String label = null;
+		double score = Double.NaN;
+		final Pair<?, ?> topicPair = (Pair<?, ?>) serializedTopic;
+		final Object left = topicPair.getLeft();
+		final Object right = topicPair.getRight();
+		if (left instanceof String) {
+			label = (String) left;
+		}
+		if (right instanceof Double) {
+			score = (Double) right;
+		}
+		if (label == null || Double.isNaN(score)) {
+			return null;
+		}
+		return new Topic(label, score);
 	}
 
 	/**
