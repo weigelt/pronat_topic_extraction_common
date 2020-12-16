@@ -180,9 +180,19 @@ public class TopicExtractionCore {
 		return retrievedTopics;
 	}
 
-	public static void addTopicsToInputGraph(List<Topic> topics, IGraph graph) {
+	/**
+	 * TODO
+	 *
+	 * @param topics
+	 * @param graph
+	 */
+	public static void setTopicsToInputGraph(List<Topic> topics, IGraph graph) {
 		prepareGraph(graph);
-		final INode node = graph.createNode(graph.getNodeType(TopicExtractionCore.TOPICS_NODE_TYPE));
+		final INodeType nodeType = graph.getNodeType(TopicExtractionCore.TOPICS_NODE_TYPE);
+		for (final INode node : graph.getNodesOfType(nodeType)) {
+			graph.deleteNode(node);
+		}
+		final INode node = graph.createNode(nodeType);
 		final List<Pair<String, Double>> serializedTopics = transformTopicListForSerialization(topics);
 		node.setAttributeValue(TopicExtractionCore.TOPIC_ATTRIBUTE, serializedTopics);
 	}
