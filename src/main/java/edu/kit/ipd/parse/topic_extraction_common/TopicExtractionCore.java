@@ -64,44 +64,42 @@ public class TopicExtractionCore {
 	}
 
 	public TopicExtractionCore(ResourceConnector ressourceConnector) {
-		this.graphCache = new HashMap<>();
-		this.numTopics = -1;
-		this.resourceConnector = ressourceConnector;
+		graphCache = new HashMap<>();
+		numTopics = -1;
+		resourceConnector = ressourceConnector;
 	}
 
 	/**
-	 * Gets the timeout (for creating the sense graphs). Note, that for the
-	 * first hop the maximum allowed time will be one quarter of the overall
-	 * timeout
+	 * Gets the timeout (for creating the sense graphs). Note, that for the first
+	 * hop the maximum allowed time will be one quarter of the overall timeout
 	 *
 	 * @return the timeout.
 	 */
 	public int getTimeout() {
-		return this.timeoutSecondHop;
+		return timeoutSecondHop;
 	}
 
 	/**
-	 * Sets the timeout (for creating the sense graphs). Note, that for the
-	 * first hop the maximum allowed time will be one quarter of the overall
-	 * timeout
+	 * Sets the timeout (for creating the sense graphs). Note, that for the first
+	 * hop the maximum allowed time will be one quarter of the overall timeout
 	 *
 	 * @param timeout
 	 *            the timeout to set
 	 */
 	public void setTimeout(int timeout) {
-		this.timeoutFirstHop = timeout / 4;
-		this.timeoutSecondHop = timeout;
+		timeoutFirstHop = timeout / 4;
+		timeoutSecondHop = timeout;
 	}
 
 	/**
-	 * Sets the number of topics allowed. If a negative number is set, the
-	 * algorithm will decide a proper ammount of topics
+	 * Sets the number of topics allowed. If a negative number is set, the algorithm
+	 * will decide a proper ammount of topics
 	 *
 	 * @param n
 	 *            number of topics
 	 */
 	public void setNumTopics(int n) {
-		this.numTopics = n;
+		numTopics = n;
 	}
 
 	/**
@@ -118,11 +116,11 @@ public class TopicExtractionCore {
 	}
 
 	public void setTopicSelectionMethod(TopicSelectionMethod tsm) {
-		this.topicSelectionMethod = tsm;
+		topicSelectionMethod = tsm;
 	}
 
 	public TopicSelectionMethod getTopicSelectionMethod() {
-		return this.topicSelectionMethod;
+		return topicSelectionMethod;
 	}
 
 	private static void prepareGraph(IGraph graph) {
@@ -227,15 +225,15 @@ public class TopicExtractionCore {
 	}
 
 	/**
-	 * Creates a list of {@link Topic}s for the input senses. The methods
-	 * determines the amount of topics itself.
+	 * Creates a list of {@link Topic}s for the input senses. The methods determines
+	 * the amount of topics itself.
 	 *
 	 * @param wordSenses
 	 *            Collection of input senses
 	 * @return List of {@link Topic}s
 	 */
 	public List<Topic> getTopicsForSenses(Collection<String> wordSenses) {
-		return this.getTopicsForSenses(wordSenses, this.numTopics);
+		return getTopicsForSenses(wordSenses, numTopics);
 	}
 
 	/**
@@ -244,13 +242,13 @@ public class TopicExtractionCore {
 	 * @param wordSenses
 	 *            Collection of input word senses
 	 * @param amountOfTopics
-	 *            Amount of topics you want. If <= 0, the method selects the
-	 *            amount itself.
+	 *            Amount of topics you want. If <= 0, the method selects the amount
+	 *            itself.
 	 * @return List of {@link Topic}s
 	 */
 	public synchronized List<Topic> getTopicsForSenses(Collection<String> wordSenses, int amountOfTopics) {
-		final TopicGraph topicGraph = this.getTopicGraphForSenses(wordSenses);
-		return this.getTopicsForTopicGraph(topicGraph, amountOfTopics);
+		final TopicGraph topicGraph = getTopicGraphForSenses(wordSenses);
+		return getTopicsForTopicGraph(topicGraph, amountOfTopics);
 	}
 
 	/**
@@ -269,8 +267,8 @@ public class TopicExtractionCore {
 		}
 
 		for (final String sense : wordSenses) {
-			final TopicGraph senseGraph = this.createSenseGraphFor(sense);
-			final boolean senseGraphExistsAlready = this.checkIfSenseGraphExistsAlready(senseGraphs, senseGraph);
+			final TopicGraph senseGraph = createSenseGraphFor(sense);
+			final boolean senseGraphExistsAlready = checkIfSenseGraphExistsAlready(senseGraphs, senseGraph);
 			if (!senseGraphExistsAlready) {
 				senseGraphs.add(senseGraph);
 			}
@@ -298,20 +296,21 @@ public class TopicExtractionCore {
 	 * @param topicGraph
 	 *            input topic Graph
 	 * @param amountOfTopics
-	 *            Amount of topics you want. If <= 0, the methods selects the
-	 *            amount itself.
+	 *            Amount of topics you want. If <= 0, the methods selects the amount
+	 *            itself.
 	 * @return List of {@link Topic}s
 	 */
 	public synchronized List<Topic> getTopicsForTopicGraph(TopicGraph topicGraph, int amountOfTopics) {
-		final List<VertexScoreTuple> verticesWithScores = this.getVerticesSortedByCentralityScore(topicGraph);
+		final List<VertexScoreTuple> verticesWithScores = getVerticesSortedByCentralityScore(topicGraph);
 
 		if (amountOfTopics <= 0) {
 			amountOfTopics = 2 * topicGraph.getSenses().size();
 		}
-		amountOfTopics = Math.min(amountOfTopics, this.maxTopics);
+		amountOfTopics = Math.min(amountOfTopics, maxTopics);
 
 		// get the correct connectivity processor
-		final VertexScoreProcessor vsProcessor = this.topicSelectionMethod.getProcessor(topicGraph, amountOfTopics);
+		final VertexScoreProcessor vsProcessor = topicSelectionMethod
+				.getProcessor(topicGraph, amountOfTopics);
 
 		// process scores with processor and sort selected vst in descending order
 		logger.debug("Start further processing of scores");
@@ -345,15 +344,15 @@ public class TopicExtractionCore {
 	private TopicGraph createSenseGraphFor(String word) {
 		logger.debug("Creating SenseGraph for {}", word);
 		final TopicGraph retGraph = new TopicGraph();
-		final Optional<String> optWordDBResource = this.resourceConnector.getResourceStringFor(word);
+		final Optional<String> optWordDBResource = resourceConnector.getResourceStringFor(word);
 		if (!optWordDBResource.isPresent()) {
 			return retGraph;
 		}
 		// get the main meaning
 		final String wordDBResource = optWordDBResource.get();
-		final String wordFromResource = this.createLabelFromResource(wordDBResource);
-		if (this.graphCache.containsKey(wordFromResource)) {
-			return this.graphCache.get(wordFromResource);
+		final String wordFromResource = createLabelFromResource(wordDBResource);
+		if (graphCache.containsKey(wordFromResource)) {
+			return graphCache.get(wordFromResource);
 		}
 
 		final WikiVertex mainVertex = new WikiVertex(wordFromResource, wordDBResource);
@@ -364,12 +363,12 @@ public class TopicExtractionCore {
 		final Instant start = Instant.now();
 
 		// get hops, add wikiPageRedirects to first hop and add real first hop
-		final Set<String> firstHopSet = this.resourceConnector.getEquivalentResources(wordDBResource);
-		firstHopSet.addAll(this.resourceConnector.getRelatedFor(wordDBResource));
+		final Set<String> firstHopSet = resourceConnector.getEquivalentResources(wordDBResource);
+		firstHopSet.addAll(resourceConnector.getRelatedFor(wordDBResource));
 		// first add all first hops; save a map with url to vertex
 		final Map<String, WikiVertex> urlToVertex = new HashMap<>();
 		for (final String url : firstHopSet) {
-			final String name = this.createLabelFromResource(url);
+			final String name = createLabelFromResource(url);
 			final WikiVertex vertex = new WikiVertex(name, url);
 			retGraph.addVertex(vertex);
 			retGraph.addEdge(mainVertex, vertex);
@@ -377,28 +376,28 @@ public class TopicExtractionCore {
 		}
 
 		// check for timeout now
-		if (Duration.between(start, Instant.now()).getSeconds() > this.timeoutFirstHop) {
-			return this.handleTimeout(wordFromResource, retGraph, word);
+		if (Duration.between(start, Instant.now()).getSeconds() > timeoutFirstHop) {
+			return handleTimeout(wordFromResource, retGraph, word);
 		}
 
 		// then add all 2nd hops
 		for (final Entry<String, WikiVertex> entry : urlToVertex.entrySet()) {
 			final String url = entry.getKey();
 
-			final Set<String> secondHopSet = this.resourceConnector.getRelatedFor(url);
+			final Set<String> secondHopSet = resourceConnector.getRelatedFor(url);
 			for (final String url2 : secondHopSet) {
-				final String name2 = this.createLabelFromResource(url2);
+				final String name2 = createLabelFromResource(url2);
 				final WikiVertex vertex2 = new WikiVertex(name2, url2);
 				retGraph.addVertex(vertex2);
 				retGraph.addEdge(entry.getValue(), vertex2);
-				if (Duration.between(start, Instant.now()).getSeconds() > this.timeoutSecondHop) {
-					return this.handleTimeout(wordFromResource, retGraph, word);
+				if (Duration.between(start, Instant.now()).getSeconds() > timeoutSecondHop) {
+					return handleTimeout(wordFromResource, retGraph, word);
 				}
 			}
 		}
 
 		// all went fine, save the graph in the cache and return
-		this.graphCache.put(wordFromResource, retGraph);
+		graphCache.put(wordFromResource, retGraph);
 		if (logger.isDebugEnabled()) {
 			logger.debug("SenseGraph for {} has {} nodes and {} vertices", word, retGraph.getVerticesSize(), retGraph.getEdgesSize());
 		}
@@ -407,7 +406,7 @@ public class TopicExtractionCore {
 
 	private TopicGraph handleTimeout(String wordFromResource, TopicGraph tg, String word) {
 		logger.warn("Stopped creation of the SenseGraph for '{}' early due to a timeout", word);
-		this.graphCache.put(wordFromResource, tg);
+		graphCache.put(wordFromResource, tg);
 		if (logger.isDebugEnabled()) {
 			logger.debug("SenseGraph for {} has {} nodes and {} vertices", word, tg.getVerticesSize(), tg.getEdgesSize());
 		}
@@ -415,7 +414,7 @@ public class TopicExtractionCore {
 	}
 
 	private String createLabelFromResource(String url) {
-		return this.resourceConnector.getLabelForResourceSimple(url);
+		return resourceConnector.getLabelForResourceSimple(url);
 	}
 
 	private Map<WikiVertex, Double> getSortedCentralityScores(TopicGraph tGraph) {
@@ -425,7 +424,7 @@ public class TopicExtractionCore {
 
 	private List<VertexScoreTuple> getVerticesSortedByCentralityScore(TopicGraph tGraph) {
 		final List<VertexScoreTuple> retList = new ArrayList<>();
-		final Map<WikiVertex, Double> scores = this.getSortedCentralityScores(tGraph);
+		final Map<WikiVertex, Double> scores = getSortedCentralityScores(tGraph);
 		final Iterator<Entry<WikiVertex, Double>> entryIterator = scores.entrySet().iterator();
 		while (entryIterator.hasNext()) {
 			final Entry<WikiVertex, Double> entry = entryIterator.next();

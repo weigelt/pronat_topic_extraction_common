@@ -80,7 +80,7 @@ public class DBPediaConnector implements ResourceConnector {
 
 	public DBPediaConnector(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
-		this.stopwords = this.loadStopwords();
+		stopwords = loadStopwords();
 	}
 
 	private List<String> loadStopwords() {
@@ -97,16 +97,16 @@ public class DBPediaConnector implements ResourceConnector {
 	@Override
 	public Optional<String> getResourceStringFor(String queryLabel) {
 		Objects.requireNonNull(queryLabel);
-		String queryString = String.format(this.getBaseDbrString(), queryLabel.replace("'", " "));
+		String queryString = String.format(getBaseDbrString(), queryLabel.replace("'", " "));
 
 		String retString = null;
-		try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+		try (QueryExecution qexec = createQueryExecution(queryString)) {
 			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
 				final QuerySolution soln = results.nextSolution();
 				final String res = soln.get("res").toString();
 				final String label = soln.get("label").toString();
-				if (this.checkLabelWithQuery(label, queryLabel) && this.checkResource(res)) {
+				if (checkLabelWithQuery(label, queryLabel) && checkResource(res)) {
 					retString = res;
 					break;
 				}
@@ -121,7 +121,7 @@ public class DBPediaConnector implements ResourceConnector {
 			// get the page the page is redirected to
 			queryString = "PREFIX dbo: <http://dbpedia.org/ontology/> SELECT DISTINCT ?res WHERE { <%s> dbo:wikiPageRedirects ?res}";
 			queryString = String.format(queryString, retString);
-			try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+			try (QueryExecution qexec = createQueryExecution(queryString)) {
 				final ResultSet results = qexec.execSelect();
 				if (results.hasNext()) {
 					final QuerySolution soln = results.nextSolution();
@@ -139,7 +139,7 @@ public class DBPediaConnector implements ResourceConnector {
 
 		final String queryString = String.format(DBPediaConnector.getBaseRedirectQuery(), resource);
 
-		try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+		try (QueryExecution qexec = createQueryExecution(queryString)) {
 			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
 				final QuerySolution soln = results.nextSolution();
@@ -173,14 +173,14 @@ public class DBPediaConnector implements ResourceConnector {
 		Objects.requireNonNull(dbResource);
 		final Set<String> retSet = new HashSet<>();
 
-		final String queryString = String.format(this.getBaseRelatedString(), dbResource);
+		final String queryString = String.format(getBaseRelatedString(), dbResource);
 
-		try (QueryExecution qexec = this.createQueryExecution(queryString)) {
+		try (QueryExecution qexec = createQueryExecution(queryString)) {
 			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
 				final QuerySolution soln = results.nextSolution();
 				final String uri = soln.get("uri").toString();
-				if (this.checkURI(uri)) {
+				if (checkURI(uri)) {
 					retSet.add(uri);
 				}
 			}
@@ -191,7 +191,7 @@ public class DBPediaConnector implements ResourceConnector {
 
 	private boolean checkURI(String uri) {
 		return uri.startsWith("http://dbpedia.org/resource") && !uri.contains("File:") && !uri.contains("Wikt:")
-				&& this.isNoStopWord(this.getLabelForResourceSimple(uri));
+				&& isNoStopWord(getLabelForResourceSimple(uri));
 	}
 
 	@Override
@@ -206,7 +206,7 @@ public class DBPediaConnector implements ResourceConnector {
 		String retString = "";
 
 		final String query = String.format(baseLabelQuery, dbResource);
-		try (QueryExecution qexec = this.createQueryExecution(query)) {
+		try (QueryExecution qexec = createQueryExecution(query)) {
 			final ResultSet results = qexec.execSelect();
 			while (results.hasNext()) {
 				final QuerySolution soln = results.nextSolution();
@@ -220,7 +220,7 @@ public class DBPediaConnector implements ResourceConnector {
 	}
 
 	protected QueryExecution createQueryExecution(String queryString) {
-		final QueryEngineHTTP qe = new QueryEngineHTTP(this.serviceUrl, queryString);
+		final QueryEngineHTTP qe = new QueryEngineHTTP(serviceUrl, queryString);
 		qe.addParam("timeout", "30000");
 		return qe;
 	}
@@ -231,7 +231,7 @@ public class DBPediaConnector implements ResourceConnector {
 			return false;
 		}
 		// check for stopwords defined
-		for (final String stopword : this.stopwords) {
+		for (final String stopword : stopwords) {
 			if (label.contains(stopword)) {
 				// is in the s
 				return false;

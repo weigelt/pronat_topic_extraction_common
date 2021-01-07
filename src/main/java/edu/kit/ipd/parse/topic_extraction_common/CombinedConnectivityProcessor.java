@@ -39,30 +39,29 @@ public class CombinedConnectivityProcessor implements VertexScoreProcessor {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * im.janke.topicExtraction.VertexScoreProcessor#processCentralityScores(
+	 * @see im.janke.topicExtraction.VertexScoreProcessor#processCentralityScores(
 	 * java.util.List, im.janke.topicExtraction.graph.TopicGraph)
 	 */
 	@Override
 	public Set<VertexScoreTuple> processCentralityScores(List<VertexScoreTuple> centralityScoresTuples) {
-		Objects.requireNonNull(this.topicGraph);
+		Objects.requireNonNull(topicGraph);
 		Objects.requireNonNull(centralityScoresTuples);
 		centralityScoresTuples.sort(Collections.reverseOrder());
 
 		final Set<VertexScoreTuple> vsSet = new HashSet<>();
 
-		final int maxConnectivity = this.topicGraph.getMaxSenseConnectivity();
+		final int maxConnectivity = topicGraph.getMaxSenseConnectivity();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Max Sense Connectivity = " + maxConnectivity);
 		}
 		int currentConnectivity = maxConnectivity;
 		final Set<WikiVertex> processedVertices = new HashSet<>();
 
-		while ((vsSet.size() < this.topics) && (currentConnectivity > 0)) {
+		while ((vsSet.size() < topics) && (currentConnectivity > 0)) {
 			// get possible topic vertices
 			final Set<WikiVertex> currPossTopicVertices = new HashSet<>();
 			while (currPossTopicVertices.isEmpty() && (currentConnectivity > 0)) {
-				final Set<WikiVertex> connSenses = this.topicGraph.getVerticesWithSenseConnectivity(currentConnectivity);
+				final Set<WikiVertex> connSenses = topicGraph.getVerticesWithSenseConnectivity(currentConnectivity);
 				for (final WikiVertex wv : connSenses) {
 					if (processedVertices.contains(wv)) {
 						continue;
@@ -93,11 +92,12 @@ public class CombinedConnectivityProcessor implements VertexScoreProcessor {
 				// act for vertices, that were not connected before
 				// try to get a as high as possible connectivity between
 				// remaining senses
-				final List<WikiVertex> remainingSenses = new ArrayList<>(this.topicGraph.getSenses());
-				remainingSenses.removeAll(this.topicGraph.getInitialVerticesFor(vst.vertex));
-				final int remainingConnectivity = Math.min(currentConnectivity, this.topicGraph.getSenses().size() - currentConnectivity);
-				if (vsSet.size() < this.topics) {
-					this.processRemainingTopics(centralityScoresTuples, vsSet, processedVertices, remainingSenses, remainingConnectivity);
+				final List<WikiVertex> remainingSenses = new ArrayList<>(topicGraph.getSenses());
+				remainingSenses.removeAll(topicGraph.getInitialVerticesFor(vst.vertex));
+				final int remainingConnectivity = Math.min(currentConnectivity,
+						topicGraph.getSenses().size() - currentConnectivity);
+				if (vsSet.size() < topics) {
+					processRemainingTopics(centralityScoresTuples, vsSet, processedVertices, remainingSenses, remainingConnectivity);
 				}
 				break;
 			}
@@ -110,12 +110,12 @@ public class CombinedConnectivityProcessor implements VertexScoreProcessor {
 			Set<WikiVertex> processedVertices, List<WikiVertex> remainingSenses, int remainingConnectivity) {
 		// TODO!
 		while ((remainingSenses.size() > 0) && (remainingConnectivity > 0)) {
-			final Set<WikiVertex> remConnectedVertices = this.topicGraph.getVerticesWithSenseConnectivity(remainingConnectivity);
+			final Set<WikiVertex> remConnectedVertices = topicGraph.getVerticesWithSenseConnectivity(remainingConnectivity);
 			// find vertices, for which the list of connected vertices
 			// contains only vertices, that are "remaining"
 			final List<WikiVertex> selectedRemVertices = new ArrayList<>();
 			testRem: for (final WikiVertex currTry : remConnectedVertices) {
-				final List<WikiVertex> vConnListTry = this.topicGraph.getInitialVerticesFor(currTry);
+				final List<WikiVertex> vConnListTry = topicGraph.getInitialVerticesFor(currTry);
 				for (final WikiVertex ttt : vConnListTry) {
 					if (!remainingSenses.contains(ttt)) {
 						continue testRem;
@@ -131,7 +131,7 @@ public class CombinedConnectivityProcessor implements VertexScoreProcessor {
 					if (!selectedRemVertices.contains(vst.vertex) || vsSet.contains(vst)) {
 						continue;
 					}
-					final List<WikiVertex> vertexConnList = this.topicGraph.getInitialVerticesFor(vst.vertex);
+					final List<WikiVertex> vertexConnList = topicGraph.getInitialVerticesFor(vst.vertex);
 					vsSet.add(vst);
 					processedVertices.add(vst.vertex);
 					remainingSenses.removeAll(vertexConnList);

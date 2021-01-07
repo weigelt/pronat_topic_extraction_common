@@ -21,16 +21,16 @@ public class Topic implements Serializable {
 	private final List<String> relatedSenses;
 
 	/**
-	 * Create a new Topic with the provided label. The score for this topic will
-	 * be set to {@link Double#NaN}!
+	 * Create a new Topic with the provided label. The score for this topic will be
+	 * set to {@link Double#NaN}!
 	 *
 	 * @param label
 	 *            Label of the topic
 	 */
 	public Topic(String label) {
 		this.label = label;
-		this.score = Double.NaN;
-		this.relatedSenses = new ArrayList<>();
+		score = Double.NaN;
+		relatedSenses = new ArrayList<>();
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class Topic implements Serializable {
 	public Topic(String label, double score) {
 		this.label = label;
 		this.score = score;
-		this.relatedSenses = new ArrayList<>();
+		relatedSenses = new ArrayList<>();
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class Topic implements Serializable {
 	 * @return whether the related sense could be added
 	 */
 	public boolean addRelatedSense(String relSense) {
-		return this.relatedSenses.add(relSense);
+		return relatedSenses.add(relSense);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class Topic implements Serializable {
 	 * @return whether the related sense could be added
 	 */
 	public boolean addRelatedSense(WikiVertex wv) {
-		return this.relatedSenses.add(wv.getLabel());
+		return relatedSenses.add(wv.getLabel());
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Topic implements Serializable {
 	 */
 	public void addRelatedSenses(List<WikiVertex> wvList) {
 		for (final WikiVertex wv : wvList) {
-			this.addRelatedSense(wv);
+			addRelatedSense(wv);
 		}
 	}
 
@@ -85,21 +85,21 @@ public class Topic implements Serializable {
 	 * @return the label
 	 */
 	public String getLabel() {
-		return this.label;
+		return label;
 	}
 
 	/**
 	 * @return the relatedSenses
 	 */
 	public List<String> getRelatedSenses() {
-		return this.relatedSenses;
+		return relatedSenses;
 	}
 
 	/**
 	 * @return the score
 	 */
 	public double getScore() {
-		return this.score;
+		return score;
 	}
 
 	/*
@@ -111,7 +111,7 @@ public class Topic implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.label == null) ? 0 : this.label.hashCode());
+		result = (prime * result) + ((label == null) ? 0 : label.hashCode());
 		return result;
 	}
 
@@ -132,7 +132,7 @@ public class Topic implements Serializable {
 			return false;
 		}
 		final Topic other = (Topic) obj;
-		if (!Objects.equals(this.label, other.label)) {
+		if (!Objects.equals(label, other.label)) {
 			return false;
 		}
 		return true;
@@ -145,7 +145,7 @@ public class Topic implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "\"" + this.label + "\"";
+		return "\"" + label + "\"";
 	}
 
 }

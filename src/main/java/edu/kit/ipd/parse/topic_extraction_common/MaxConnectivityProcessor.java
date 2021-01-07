@@ -34,20 +34,19 @@ public class MaxConnectivityProcessor implements VertexScoreProcessor {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * im.janke.topicExtraction.VertexScoreProcessor#processCentralityScores(
+	 * @see im.janke.topicExtraction.VertexScoreProcessor#processCentralityScores(
 	 * java.util.List, im.janke.topicExtraction.graph.TopicGraph)
 	 */
 	@Override
 	public Set<VertexScoreTuple> processCentralityScores(List<VertexScoreTuple> centralityScoresTuples) {
-		Objects.requireNonNull(this.topicGraph);
+		Objects.requireNonNull(topicGraph);
 		Objects.requireNonNull(centralityScoresTuples);
 		centralityScoresTuples.sort(Collections.reverseOrder());
 
-		int remainingTopicsToSet = this.topics;
+		int remainingTopicsToSet = topics;
 
 		// get vertices, that were in most sense graphs
-		final int maxConnectivity = this.topicGraph.getMaxSenseConnectivity();
+		final int maxConnectivity = topicGraph.getMaxSenseConnectivity();
 		logger.debug("Max Sense Connectivity = " + maxConnectivity);
 
 		final Set<VertexScoreTuple> retSet = new HashSet<>();
@@ -57,7 +56,7 @@ public class MaxConnectivityProcessor implements VertexScoreProcessor {
 		int currentConnectivity = maxConnectivity;
 		while ((remainingTopicsToSet > 0) && (currentConnectivity > 0)) {
 			for (final VertexScoreTuple v : centralityScoresTuples) {
-				final List<WikiVertex> vertexConnList = this.topicGraph.getInitialVerticesFor(v.vertex);
+				final List<WikiVertex> vertexConnList = topicGraph.getInitialVerticesFor(v.vertex);
 				if (vertexConnList.size() == currentConnectivity) {
 					retSet.add(v);
 					remainingTopicsToSet--;

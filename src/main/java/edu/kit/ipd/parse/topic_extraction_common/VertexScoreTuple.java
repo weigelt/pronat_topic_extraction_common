@@ -19,7 +19,7 @@ class VertexScoreTuple implements Comparable<VertexScoreTuple> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.score, this.vertex);
+		return Objects.hash(score, vertex);
 	}
 
 	@Override
@@ -31,12 +31,12 @@ class VertexScoreTuple implements Comparable<VertexScoreTuple> {
 			return false;
 		}
 		final VertexScoreTuple other = (VertexScoreTuple) obj;
-		return Objects.equals(this.score, other.score) && Objects.equals(this.vertex, other.vertex);
+		return Objects.equals(score, other.score) && Objects.equals(vertex, other.vertex);
 	}
 
 	@Override
 	public int compareTo(VertexScoreTuple o) {
-		return Double.compare(this.score, o.score);
+		return Double.compare(score, o.score);
 	}
 
 }

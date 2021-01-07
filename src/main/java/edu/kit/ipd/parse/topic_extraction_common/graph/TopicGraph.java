@@ -39,10 +39,10 @@ public class TopicGraph implements Serializable {
 
 	private static final long serialVersionUID = 6011335886418476642L;
 
-	private WeightedPseudograph<WikiVertex, DefaultWeightedEdge>	graph;
-	private List<WikiVertex>										senses							= new ArrayList<>();
-	private HashMap<WikiVertex, List<WikiVertex>>					vertexToConnectedSenseVertices	= new HashMap<>();
-	private HashMap<Integer, Set<WikiVertex>>						cachedVerticesConnectivity		= new HashMap<>();
+	private WeightedPseudograph<WikiVertex, DefaultWeightedEdge> graph;
+	private List<WikiVertex> senses = new ArrayList<>();
+	private HashMap<WikiVertex, List<WikiVertex>> vertexToConnectedSenseVertices = new HashMap<>();
+	private HashMap<Integer, Set<WikiVertex>> cachedVerticesConnectivity = new HashMap<>();
 
 	private PageRank<WikiVertex, DefaultWeightedEdge> pageRank = null;
 
@@ -84,8 +84,7 @@ public class TopicGraph implements Serializable {
 	}
 
 	private static WeightedPseudograph<WikiVertex, DefaultWeightedEdge> mergeUnderlyingGraphs(
-			WeightedPseudograph<WikiVertex, DefaultWeightedEdge> g1,
-			WeightedPseudograph<WikiVertex, DefaultWeightedEdge> g2) {
+			WeightedPseudograph<WikiVertex, DefaultWeightedEdge> g1, WeightedPseudograph<WikiVertex, DefaultWeightedEdge> g2) {
 		UndirectedWeightedGraphBuilder<WikiVertex, DefaultWeightedEdge, WeightedPseudograph<WikiVertex, DefaultWeightedEdge>> graphBuilder = new UndirectedWeightedGraphBuilder<>(
 				new WeightedPseudograph<WikiVertex, DefaultWeightedEdge>(DefaultWeightedEdge.class));
 
@@ -198,17 +197,14 @@ public class TopicGraph implements Serializable {
 	}
 
 	/**
-	 * Returns the maximum of connectivity, which is the highest number of initial vertices for any vertex.
+	 * Returns the maximum of connectivity, which is the highest number of initial
+	 * vertices for any vertex.
 	 *
 	 * @return maximum of connectivity
 	 */
 	public int getMaxSenseConnectivity() {
 		if (vertexToConnectedSenseVertices != null) {
-			return vertexToConnectedSenseVertices.values()
-					.stream()
-					.map(Collection::size)
-					.max(Integer::compareTo)
-					.orElse(-1);
+			return vertexToConnectedSenseVertices.values().stream().map(Collection::size).max(Integer::compareTo).orElse(-1);
 		}
 		return -1;
 	}
@@ -253,14 +249,15 @@ public class TopicGraph implements Serializable {
 	}
 
 	/**
-	 * Returns the length of the shortest path between the provided nodes, If there is no path,
-	 * {@link Integer#MAX_VALUE} will be returned.
+	 * Returns the length of the shortest path between the provided nodes, If there
+	 * is no path, {@link Integer#MAX_VALUE} will be returned.
 	 *
 	 * @param v1
 	 *            First node
 	 * @param v2
 	 *            Second node
-	 * @return length of shortest path or {@link Integer#MAX_VALUE}, if not connected by a path
+	 * @return length of shortest path or {@link Integer#MAX_VALUE}, if not
+	 *         connected by a path
 	 */
 	public int shortestPathLength(WikiVertex v1, WikiVertex v2) {
 		DijkstraShortestPath<WikiVertex, DefaultWeightedEdge> dijkstra = new DijkstraShortestPath<>(graph);
@@ -279,7 +276,8 @@ public class TopicGraph implements Serializable {
 	}
 
 	/**
-	 * Returns lazily the PageRank scores. If already computed before, scores won't be calculated again
+	 * Returns lazily the PageRank scores. If already computed before, scores won't
+	 * be calculated again
 	 *
 	 * @return Map of the PageRank scores
 	 */

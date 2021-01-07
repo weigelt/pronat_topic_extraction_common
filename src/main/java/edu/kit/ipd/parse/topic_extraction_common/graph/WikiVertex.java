@@ -10,8 +10,8 @@ public class WikiVertex implements Serializable {
 
 	private static final long serialVersionUID = -6530169345636353515L;
 
-	private String	label;
-	private String	resource;
+	private String label;
+	private String resource;
 
 	public WikiVertex(String label, String resource) {
 		this.label = label;
