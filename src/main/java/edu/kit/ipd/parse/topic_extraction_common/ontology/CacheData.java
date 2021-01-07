@@ -50,34 +50,34 @@ public final class CacheData implements Serializable {
 	}
 
 	public TreeMap<String, String> getResources() {
-		return this.resources;
+		return resources;
 	}
 
 	public TreeMap<String, String> getLabels() {
-		return this.labels;
+		return labels;
 	}
 
 	public TreeMap<String, TreeSet<String>> getRelated() {
-		return this.related;
+		return related;
 	}
 
 	public TreeMap<String, String> getResourceSimples() {
-		return this.resourceSimples;
+		return resourceSimples;
 	}
 
 	public TreeMap<String, TreeSet<String>> getEquivalentResources() {
-		return this.equivalentResources;
+		return equivalentResources;
 	}
 
 	public void store() {
-		if (++this.writeCounter % CacheData.WRITE_AT == 0) {
-			this.write();
+		if (++writeCounter % CacheData.WRITE_AT == 0) {
+			write();
 		}
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		this.write();
+		write();
 	}
 
 	private void write() {
