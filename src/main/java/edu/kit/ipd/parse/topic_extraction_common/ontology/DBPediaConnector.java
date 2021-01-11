@@ -1,19 +1,14 @@
 package edu.kit.ipd.parse.topic_extraction_common.ontology;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
@@ -85,11 +80,11 @@ public class DBPediaConnector implements ResourceConnector {
 
 	private List<String> loadStopwords() {
 		List<String> retList = new ArrayList<>();
-		final URL fileURL = DBPediaConnector.class.getResource("/stopwords.txt");
-		try (Stream<String> lines = Files.lines(Paths.get(fileURL.toURI()))) {
-			retList = lines.map(s -> s.replace("\"", "")).collect(Collectors.toList());
-		} catch (IOException | URISyntaxException e) {
-			e.printStackTrace();
+		final InputStream stopwordsStream = DBPediaConnector.class.getResourceAsStream("/stopwords.txt");
+		try (Scanner lines = new Scanner(stopwordsStream)) {
+			while (lines.hasNextLine()) {
+				retList.add(lines.nextLine().replace("\"", ""));
+			}
 		}
 		return retList;
 	}
