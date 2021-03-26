@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.graph;
+package edu.kit.ipd.pronat.topic_extraction_common.graph;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,6 +31,7 @@ import org.jgrapht.traverse.DepthFirstIterator;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public class TopicGraph implements Serializable {

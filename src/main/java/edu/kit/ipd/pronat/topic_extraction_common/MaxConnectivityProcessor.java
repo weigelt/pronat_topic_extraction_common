@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common;
+package edu.kit.ipd.pronat.topic_extraction_common;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import edu.kit.ipd.pronat.topic_extraction_common.graph.TopicGraph;
+import edu.kit.ipd.pronat.topic_extraction_common.graph.WikiVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.ipd.parse.topic_extraction_common.graph.TopicGraph;
-import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
-
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public class MaxConnectivityProcessor implements VertexScoreProcessor {

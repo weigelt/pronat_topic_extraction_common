@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.ontology;
+package edu.kit.ipd.pronat.topic_extraction_common.ontology;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
  * A cached resource connector decorator.
  *
  * @author Dominik Fuchss
+ * @author Sebastian Weigelt
  *
  */
 public class CachedResourceConnector implements ResourceConnector {
@@ -25,12 +26,12 @@ public class CachedResourceConnector implements ResourceConnector {
 
 	public CachedResourceConnector(ResourceConnector connector) {
 		this.connector = connector;
-		this.data = CacheData.loadData();
+		data = CacheData.loadData();
 	}
 
 	@Override
 	public Optional<String> getResourceStringFor(String label) {
-		return this.getResourceStringFor(label, 0);
+		return getResourceStringFor(label, 0);
 	}
 
 	private Optional<String> getResourceStringFor(String label, int tryNo) {
@@ -39,27 +40,27 @@ public class CachedResourceConnector implements ResourceConnector {
 			return Optional.empty();
 		}
 
-		if (this.data.getResources().containsKey(label)) {
-			return Optional.ofNullable(this.data.getResources().get(label));
+		if (data.getResources().containsKey(label)) {
+			return Optional.ofNullable(data.getResources().get(label));
 		}
 
 		try {
-			final Optional<String> result = this.connector.getResourceStringFor(label);
-			this.data.getResources().put(label, result.orElse(null));
-			this.data.store();
+			final Optional<String> result = connector.getResourceStringFor(label);
+			data.getResources().put(label, result.orElse(null));
+			data.store();
 			return result;
 		} catch (final Exception e) {
 			CachedResourceConnector.logger.error(e.getMessage(), e.getCause());
 			// Wait because of possible timeout of online resource
-			this.sleep();
-			return this.getResourceStringFor(label, tryNo + 1);
+			sleep();
+			return getResourceStringFor(label, tryNo + 1);
 		}
 
 	}
 
 	@Override
 	public Set<String> getRelatedFor(String resource) {
-		return this.getRelatedFor(resource, 0);
+		return getRelatedFor(resource, 0);
 	}
 
 	private Set<String> getRelatedFor(String resource, int tryNo) {
@@ -68,26 +69,26 @@ public class CachedResourceConnector implements ResourceConnector {
 			return new TreeSet<>();
 		}
 
-		if (this.data.getRelated().containsKey(resource)) {
-			return this.data.getRelated().get(resource);
+		if (data.getRelated().containsKey(resource)) {
+			return data.getRelated().get(resource);
 		}
 
 		try {
-			final TreeSet<String> result = new TreeSet<>(this.connector.getRelatedFor(resource));
-			this.data.getRelated().put(resource, result);
-			this.data.store();
+			final TreeSet<String> result = new TreeSet<>(connector.getRelatedFor(resource));
+			data.getRelated().put(resource, result);
+			data.store();
 			return result;
 		} catch (final Exception e) {
 			CachedResourceConnector.logger.error(e.getMessage(), e.getCause());
 			// Wait because of possible timeout of online resource
-			this.sleep();
-			return this.getRelatedFor(resource, tryNo + 1);
+			sleep();
+			return getRelatedFor(resource, tryNo + 1);
 		}
 	}
 
 	@Override
 	public Optional<String> getLabelForResource(String resource) {
-		return this.getLabelForResource(resource, 0);
+		return getLabelForResource(resource, 0);
 	}
 
 	private Optional<String> getLabelForResource(String resource, int tryNo) {
@@ -96,25 +97,25 @@ public class CachedResourceConnector implements ResourceConnector {
 			return Optional.empty();
 		}
 
-		if (this.data.getLabels().containsKey(resource)) {
-			return Optional.ofNullable(this.data.getLabels().get(resource));
+		if (data.getLabels().containsKey(resource)) {
+			return Optional.ofNullable(data.getLabels().get(resource));
 		}
 
 		try {
-			final Optional<String> result = this.connector.getLabelForResource(resource);
-			this.data.getLabels().put(resource, result.orElse(null));
-			this.data.store();
+			final Optional<String> result = connector.getLabelForResource(resource);
+			data.getLabels().put(resource, result.orElse(null));
+			data.store();
 			return result;
 		} catch (final Exception e) {
 			CachedResourceConnector.logger.error(e.getMessage(), e.getCause());
-			this.sleep();
-			return this.getLabelForResource(resource, tryNo + 1);
+			sleep();
+			return getLabelForResource(resource, tryNo + 1);
 		}
 	}
 
 	@Override
 	public String getLabelForResourceSimple(String dbResource) {
-		return this.getLabelForResourceSimple(dbResource, 0);
+		return getLabelForResourceSimple(dbResource, 0);
 	}
 
 	private String getLabelForResourceSimple(String dbResource, int tryNo) {
@@ -123,25 +124,25 @@ public class CachedResourceConnector implements ResourceConnector {
 			return null;
 		}
 
-		if (this.data.getResourceSimples().containsKey(dbResource)) {
-			return this.data.getResourceSimples().get(dbResource);
+		if (data.getResourceSimples().containsKey(dbResource)) {
+			return data.getResourceSimples().get(dbResource);
 		}
 
 		try {
-			final String result = this.connector.getLabelForResourceSimple(dbResource);
-			this.data.getResourceSimples().put(dbResource, result);
-			this.data.store();
+			final String result = connector.getLabelForResourceSimple(dbResource);
+			data.getResourceSimples().put(dbResource, result);
+			data.store();
 			return result;
 		} catch (final Exception e) {
 			CachedResourceConnector.logger.error(e.getMessage(), e.getCause());
-			this.sleep();
-			return this.getLabelForResourceSimple(dbResource, tryNo + 1);
+			sleep();
+			return getLabelForResourceSimple(dbResource, tryNo + 1);
 		}
 	}
 
 	@Override
 	public Set<String> getEquivalentResources(String resource) {
-		return this.getEquivalentResources(resource, 0);
+		return getEquivalentResources(resource, 0);
 	}
 
 	private Set<String> getEquivalentResources(String resource, int tryNo) {
@@ -150,19 +151,19 @@ public class CachedResourceConnector implements ResourceConnector {
 			return new HashSet<>();
 		}
 
-		if (this.data.getEquivalentResources().containsKey(resource)) {
-			return this.data.getEquivalentResources().get(resource);
+		if (data.getEquivalentResources().containsKey(resource)) {
+			return data.getEquivalentResources().get(resource);
 		}
 
 		try {
-			final TreeSet<String> result = new TreeSet<>(this.connector.getEquivalentResources(resource));
-			this.data.getEquivalentResources().put(resource, result);
-			this.data.store();
+			final TreeSet<String> result = new TreeSet<>(connector.getEquivalentResources(resource));
+			data.getEquivalentResources().put(resource, result);
+			data.store();
 			return result;
 		} catch (final Exception e) {
 			CachedResourceConnector.logger.error(e.getMessage(), e.getCause());
-			this.sleep();
-			return this.getEquivalentResources(resource, tryNo + 1);
+			sleep();
+			return getEquivalentResources(resource, tryNo + 1);
 		}
 	}
 

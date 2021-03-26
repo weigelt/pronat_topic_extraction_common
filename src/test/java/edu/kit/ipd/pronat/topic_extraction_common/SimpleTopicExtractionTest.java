@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common;
+package edu.kit.ipd.pronat.topic_extraction_common;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +14,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Jan Keim
+ * @author Sebastian Weigelt
+ *
+ */
 public class SimpleTopicExtractionTest {
 	private static final Logger logger = LoggerFactory.getLogger(SimpleTopicExtractionTest.class);
 	static TopicExtractionCore topicExtraction;
@@ -54,7 +59,7 @@ public class SimpleTopicExtractionTest {
 			}
 			strBuilder.append("---------------------------------\n");
 			final String out = strBuilder.toString();
-			this.writeToFile(logFile, out);
+			writeToFile(logFile, out);
 			logger.debug(out);
 		}
 	}
@@ -86,7 +91,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("gate");
 		wordSenses.add("line (geometry)");
 		wordSenses.add("earth's surface"); // for ground
-		this.test(wordSenses, "drone1.1");
+		test(wordSenses, "drone1.1");
 	}
 
 	@Ignore
@@ -100,7 +105,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("line (geometry)");
 		wordSenses.add("line (geometry)");
 		wordSenses.add("earth's surface"); // for ground
-		this.test(wordSenses, "drone1.2");
+		test(wordSenses, "drone1.2");
 	}
 
 	@Ignore
@@ -110,7 +115,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("lawn");
 		wordSenses.add("mower");
 		wordSenses.add("grass");
-		this.test(wordSenses, "Garden1.1");
+		test(wordSenses, "Garden1.1");
 	}
 
 	@Ignore
@@ -120,7 +125,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("shed");
 		wordSenses.add("mower");
 		wordSenses.add("lawn");
-		this.test(wordSenses, "Garden1.2");
+		test(wordSenses, "Garden1.2");
 	}
 
 	@Ignore
@@ -129,7 +134,7 @@ public class SimpleTopicExtractionTest {
 		final List<String> wordSenses = new ArrayList<>();
 		wordSenses.add("tree");
 		wordSenses.add("hedge");
-		this.test(wordSenses, "Garden1.3");
+		test(wordSenses, "Garden1.3");
 	}
 
 	@Ignore
@@ -139,7 +144,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("saw");
 		wordSenses.add("table (furniture)");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "Garden1.4");
+		test(wordSenses, "Garden1.4");
 	}
 
 	@Ignore
@@ -149,7 +154,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("tank");
 		wordSenses.add("rake");
 		wordSenses.add("shed");
-		this.test(wordSenses, "Garden1.5");
+		test(wordSenses, "Garden1.5");
 	}
 
 	@Ignore
@@ -160,7 +165,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("tonic water");
 		wordSenses.add("glass (drinkware)");
 		wordSenses.add("gin");
-		this.test(wordSenses, "Bar1.1");
+		test(wordSenses, "Bar1.1");
 	}
 
 	@Ignore
@@ -173,7 +178,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("lime (fruit)");
 		wordSenses.add("juice");
 		wordSenses.add("glass (drinkware)");
-		this.test(wordSenses, "Bar1.2");
+		test(wordSenses, "Bar1.2");
 	}
 
 	@Ignore
@@ -184,7 +189,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("champagne");
 		wordSenses.add("glass");
 		wordSenses.add("counter (furniture)");
-		this.test(wordSenses, "Bar1.3");
+		test(wordSenses, "Bar1.3");
 	}
 
 	@Ignore
@@ -202,7 +207,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("cocktail");
 		wordSenses.add("glass (drinkware)");
 		wordSenses.add("counter (furniture)");
-		this.test(wordSenses, "Bar1.4");
+		test(wordSenses, "Bar1.4");
 	}
 
 	@Ignore
@@ -212,7 +217,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("table (furniture)");
 		wordSenses.add("beer");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "Bar1.5");
+		test(wordSenses, "Bar1.5");
 	}
 
 	@Ignore
@@ -223,7 +228,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("popcorn");
 		wordSenses.add("popcorn");
 		wordSenses.add("hand");
-		this.test(wordSenses, "1.1");
+		test(wordSenses, "1.1");
 	}
 
 	@Ignore
@@ -235,7 +240,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("dishwasher");
 		wordSenses.add("cup");
 		wordSenses.add("dishwasher");
-		this.test(wordSenses, "1.2");
+		test(wordSenses, "1.2");
 	}
 
 	@Ignore
@@ -247,7 +252,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("juice");
 		wordSenses.add("refrigerator");
 		wordSenses.add("juice");
-		this.test(wordSenses, "1.3");
+		test(wordSenses, "1.3");
 	}
 
 	@Ignore
@@ -256,7 +261,7 @@ public class SimpleTopicExtractionTest {
 		final List<String> wordSenses = new ArrayList<>();
 		wordSenses.add("popcorn");
 		wordSenses.add("bag");
-		this.test(wordSenses, "2.1");
+		test(wordSenses, "2.1");
 	}
 
 	@Ignore
@@ -265,7 +270,7 @@ public class SimpleTopicExtractionTest {
 		final List<String> wordSenses = new ArrayList<>();
 		wordSenses.add("cup");
 		wordSenses.add("dishwasher");
-		this.test(wordSenses, "2.2");
+		test(wordSenses, "2.2");
 	}
 
 	@Ignore
@@ -275,7 +280,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
 		wordSenses.add("refrigerator");
-		this.test(wordSenses, "2.3");
+		test(wordSenses, "2.3");
 	}
 
 	@Ignore
@@ -285,7 +290,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("popcorn");
 		wordSenses.add("kitchen");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "3.1");
+		test(wordSenses, "3.1");
 	}
 
 	@Ignore
@@ -298,7 +303,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("dishwasher");
 		wordSenses.add("cup");
 		wordSenses.add("dishwasher");
-		this.test(wordSenses, "3.2");
+		test(wordSenses, "3.2");
 	}
 
 	@Ignore
@@ -308,7 +313,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("refrigerator");
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
-		this.test(wordSenses, "3.3");
+		test(wordSenses, "3.3");
 	}
 
 	@Ignore
@@ -318,7 +323,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("table (furniture)");
 		wordSenses.add("popcorn");
 		wordSenses.add("bag");
-		this.test(wordSenses, "4.1");
+		test(wordSenses, "4.1");
 	}
 
 	@Ignore
@@ -330,7 +335,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("dishwasher");
 		wordSenses.add("dishwasher");
 		wordSenses.add("dishwasher");
-		this.test(wordSenses, "4.2");
+		test(wordSenses, "4.2");
 	}
 
 	@Ignore
@@ -343,7 +348,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("refrigerator");
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
-		this.test(wordSenses, "4.3");
+		test(wordSenses, "4.3");
 	}
 
 	@Ignore
@@ -353,7 +358,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("dishware");
 		wordSenses.add("dishwasher");
 		wordSenses.add("cupboard");
-		this.test(wordSenses, "If.4.1");
+		test(wordSenses, "If.4.1");
 	}
 
 	@Ignore
@@ -364,7 +369,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("dishware");
 		wordSenses.add("dishwasher");
 		wordSenses.add("cupboard");
-		this.test(wordSenses, "If.4.2");
+		test(wordSenses, "If.4.2");
 	}
 
 	@Ignore
@@ -377,7 +382,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("dishwasher");
 		wordSenses.add("dishwasher");
 		wordSenses.add("cupboard");
-		this.test(wordSenses, "If.4.3");
+		test(wordSenses, "If.4.3");
 	}
 
 	@Ignore
@@ -390,7 +395,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
 		wordSenses.add("vodka");
-		this.test(wordSenses, "If.5.1");
+		test(wordSenses, "If.5.1");
 	}
 
 	@Ignore
@@ -402,7 +407,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("vodka");
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
-		this.test(wordSenses, "If.5.2");
+		test(wordSenses, "If.5.2");
 	}
 
 	@Ignore
@@ -415,7 +420,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
-		this.test(wordSenses, "If.5.3");
+		test(wordSenses, "If.5.3");
 	}
 
 	@Ignore
@@ -435,7 +440,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("microwave");
 		wordSenses.add("door");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "s7p08");
+		test(wordSenses, "s7p08");
 	}
 
 	@Ignore
@@ -449,7 +454,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("plate (dishware)");
 		wordSenses.add("microwave");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "s7p09");
+		test(wordSenses, "s7p09");
 	}
 
 	@Ignore
@@ -469,7 +474,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("plate (dishware)");
 		wordSenses.add("plate (dishware)");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "s7p10");
+		test(wordSenses, "s7p10");
 	}
 
 	@Ignore
@@ -482,7 +487,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("laundry");
 		wordSenses.add("clothes dryer");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -504,7 +509,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("clothes dryer");
 		wordSenses.add("door");
 		wordSenses.add("push-button");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -518,7 +523,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("clothes dryer");
 		wordSenses.add("clothes dryer");
 		wordSenses.add("program (machine)");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -536,7 +541,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("door");
 		wordSenses.add("program (machine)");
 		wordSenses.add("minute");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -557,7 +562,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("door");
 		wordSenses.add("clothes dryer");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -580,7 +585,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("clothes dryer");
 		wordSenses.add("push-button");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -594,7 +599,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("clothes dryer");
 		wordSenses.add("clothes");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -609,7 +614,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("laundry");
 		wordSenses.add("clothes dryer");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -626,7 +631,7 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("laundry");
 		wordSenses.add("clothes dryer");
 		wordSenses.add("program (machine)");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 
 	@Ignore
@@ -639,6 +644,6 @@ public class SimpleTopicExtractionTest {
 		wordSenses.add("machine");
 		wordSenses.add("clothes dryer");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, id);
+		test(wordSenses, id);
 	}
 }

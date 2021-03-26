@@ -1,9 +1,10 @@
-package edu.kit.ipd.parse.topic_extraction_common.graph;
+package edu.kit.ipd.pronat.topic_extraction_common.graph;
 
 import java.io.Serializable;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public class WikiVertex implements Serializable {

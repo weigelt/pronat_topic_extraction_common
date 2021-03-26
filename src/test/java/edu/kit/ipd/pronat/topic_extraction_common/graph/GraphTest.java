@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.graph;
+package edu.kit.ipd.pronat.topic_extraction_common.graph;
 
 import java.util.Map;
 import java.util.Random;
@@ -10,20 +10,18 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.ipd.parse.topic_extraction_common.graph.TopicGraph;
-import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
-
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 @Ignore
 public class GraphTest {
-	private static final Logger	logger	= LoggerFactory.getLogger(GraphTest.class);
-	TopicGraph					topicGraph;
-	WikiVertex					a		= new WikiVertex("A", "a");
-	WikiVertex					b		= new WikiVertex("B", "b");
-	WikiVertex					c		= new WikiVertex("C", "c");
+	private static final Logger logger = LoggerFactory.getLogger(GraphTest.class);
+	TopicGraph topicGraph;
+	WikiVertex a = new WikiVertex("A", "a");
+	WikiVertex b = new WikiVertex("B", "b");
+	WikiVertex c = new WikiVertex("C", "c");
 
 	@Before
 	public void before() {
@@ -95,8 +93,9 @@ public class GraphTest {
 		Assert.assertEquals(1000, topicGraph.getEdgesSize());
 		/* Map<WikiVertex, Double> sortedScores = */topicGraph.getPageRankScores();
 		/*
-		 * .entrySet().stream() .sorted(Map.Entry.comparingByValue( Collections.reverseOrder()))
-		 * .collect(Collectors.toMap(Map.Entry:: getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		 * .entrySet().stream() .sorted(Map.Entry.comparingByValue(
+		 * Collections.reverseOrder())) .collect(Collectors.toMap(Map.Entry:: getKey,
+		 * Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		 */
 	}
 

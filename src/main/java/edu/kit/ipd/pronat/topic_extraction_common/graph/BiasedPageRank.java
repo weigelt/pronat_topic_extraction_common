@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.graph;
+package edu.kit.ipd.pronat.topic_extraction_common.graph;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,6 +54,7 @@ import org.jgrapht.alg.scoring.PageRank;
  *
  * @author Dimitrios Michail
  * @author Jan Keim
+ * @author Sebastian Weigelt
  * @since November 2017
  */
 public final class BiasedPageRank<E> implements VertexScoringAlgorithm<WikiVertex, Double> {

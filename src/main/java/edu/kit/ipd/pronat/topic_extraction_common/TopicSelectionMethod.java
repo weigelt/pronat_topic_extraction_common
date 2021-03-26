@@ -1,12 +1,13 @@
 /**
  *
  */
-package edu.kit.ipd.parse.topic_extraction_common;
+package edu.kit.ipd.pronat.topic_extraction_common;
 
-import edu.kit.ipd.parse.topic_extraction_common.graph.TopicGraph;
+import edu.kit.ipd.pronat.topic_extraction_common.graph.TopicGraph;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public enum TopicSelectionMethod {

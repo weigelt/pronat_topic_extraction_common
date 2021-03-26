@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.ontology;
+package edu.kit.ipd.pronat.topic_extraction_common.ontology;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import edu.kit.ipd.parse.luna.tools.ConfigManager;
 
+/**
+ * @author Jan Keim
+ * @author Sebastian Weigelt
+ *
+ */
 public final class CacheData implements Serializable {
 	private static final long serialVersionUID = -4339271771491449916L;
 	private static final String PATH = ConfigManager.APP_HOME + File.separator + CachedResourceConnector.class.getName();

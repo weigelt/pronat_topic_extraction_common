@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.ontology;
+package edu.kit.ipd.pronat.topic_extraction_common.ontology;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public class DBPediaConnector implements ResourceConnector {

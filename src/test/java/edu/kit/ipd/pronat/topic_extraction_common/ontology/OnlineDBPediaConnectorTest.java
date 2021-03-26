@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.ontology;
+package edu.kit.ipd.pronat.topic_extraction_common.ontology;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -9,6 +9,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Jan Keim
+ * @author Sebastian Weigelt
+ *
+ */
 public class OnlineDBPediaConnectorTest {
 	private static final Logger logger = LoggerFactory.getLogger(OnlineDBPediaConnectorTest.class);
 
@@ -16,15 +21,15 @@ public class OnlineDBPediaConnectorTest {
 
 	@Before
 	public void before() {
-		this.connector = new DBPediaConnector();
+		connector = new DBPediaConnector();
 	}
 
 	@Test
 	public void test() {
-		final String resource = this.connector.getResourceStringFor("Refrigerator").orElse("NONE");
+		final String resource = connector.getResourceStringFor("Refrigerator").orElse("NONE");
 		Set<String> rel = new HashSet<>();
 		if (!resource.equals("NONE")) {
-			rel = this.connector.getRelatedFor(resource);
+			rel = connector.getRelatedFor(resource);
 		}
 		logger.info(resource);
 		logger.info(Arrays.toString(rel.toArray()));

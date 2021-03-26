@@ -1,14 +1,15 @@
-package edu.kit.ipd.parse.topic_extraction_common;
+package edu.kit.ipd.pronat.topic_extraction_common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
+import edu.kit.ipd.pronat.topic_extraction_common.graph.WikiVertex;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public class Topic implements Serializable {

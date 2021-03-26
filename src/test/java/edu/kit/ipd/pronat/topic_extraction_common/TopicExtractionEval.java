@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common;
+package edu.kit.ipd.pronat.topic_extraction_common;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +15,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Jan Keim
+ * @author Sebastian Weigelt
+ *
+ */
 public class TopicExtractionEval {
 	private static final Logger logger = LoggerFactory.getLogger(TopicExtractionEval.class);
 	static TopicExtractionCore topicExtraction;
@@ -60,7 +65,7 @@ public class TopicExtractionEval {
 			}
 			strBuilder.append("---------------------------------\n");
 			final String out = strBuilder.toString();
-			this.writeToFile(logFile, out);
+			writeToFile(logFile, out);
 			logger.debug(out);
 		}
 	}
@@ -90,7 +95,7 @@ public class TopicExtractionEval {
 		wordSenses.add("popcorn");
 		wordSenses.add("popcorn");
 		wordSenses.add("hand");
-		this.test(wordSenses, "1.1");
+		test(wordSenses, "1.1");
 	}
 
 	@Test
@@ -98,7 +103,7 @@ public class TopicExtractionEval {
 		final List<String> wordSenses = new ArrayList<>();
 		wordSenses.add("popcorn");
 		wordSenses.add("bag");
-		this.test(wordSenses, "2.1");
+		test(wordSenses, "2.1");
 	}
 
 	// 2
@@ -109,7 +114,7 @@ public class TopicExtractionEval {
 		wordSenses.add("kitchen");
 		wordSenses.add("table (furniture)");
 		wordSenses.add("dishwasher");
-		this.test(wordSenses, "31.2");
+		test(wordSenses, "31.2");
 	}
 
 	@Test
@@ -118,7 +123,7 @@ public class TopicExtractionEval {
 		wordSenses.add("table (furniture)");
 		wordSenses.add("cup");
 		wordSenses.add("dishwasher");
-		this.test(wordSenses, "18.2");
+		test(wordSenses, "18.2");
 	}
 
 	// 3
@@ -128,7 +133,7 @@ public class TopicExtractionEval {
 		wordSenses.add("refrigerator");
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
-		this.test(wordSenses, "3.3");
+		test(wordSenses, "3.3");
 	}
 
 	@Test
@@ -140,7 +145,7 @@ public class TopicExtractionEval {
 		wordSenses.add("refrigerator");
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
-		this.test(wordSenses, "25.3");
+		test(wordSenses, "25.3");
 	}
 
 	// 4
@@ -150,7 +155,7 @@ public class TopicExtractionEval {
 		wordSenses.add("dishware");
 		wordSenses.add("dishwasher");
 		wordSenses.add("cupboard");
-		this.test(wordSenses, "If.4.1");
+		test(wordSenses, "If.4.1");
 	}
 
 	@Test
@@ -171,7 +176,7 @@ public class TopicExtractionEval {
 		wordSenses.add("cupboard");
 		wordSenses.add("dishware");
 		wordSenses.add("cupboard");
-		this.test(wordSenses, "If.4.10");
+		test(wordSenses, "If.4.10");
 	}
 
 	// 5
@@ -186,7 +191,7 @@ public class TopicExtractionEval {
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
 		wordSenses.add("vodka");
-		this.test(wordSenses, "If.5.5");
+		test(wordSenses, "If.5.5");
 	}
 
 	@Test
@@ -199,7 +204,7 @@ public class TopicExtractionEval {
 		wordSenses.add("vodka");
 		wordSenses.add("orange (fruit)");
 		wordSenses.add("juice");
-		this.test(wordSenses, "If.5.12");
+		test(wordSenses, "If.5.12");
 	}
 
 	// 6
@@ -228,7 +233,7 @@ public class TopicExtractionEval {
 		wordSenses.add("cup");
 		wordSenses.add("shelf (storage)");
 		wordSenses.add("cupboard");
-		this.test(wordSenses, "s6p03");
+		test(wordSenses, "s6p03");
 	}
 
 	@Test
@@ -249,7 +254,7 @@ public class TopicExtractionEval {
 		wordSenses.add("cup");
 		wordSenses.add("dishwasher");
 		wordSenses.add("cupboard");
-		this.test(wordSenses, "s6p10");
+		test(wordSenses, "s6p10");
 	}
 
 	// 7
@@ -269,7 +274,7 @@ public class TopicExtractionEval {
 		wordSenses.add("microwave");
 		wordSenses.add("door");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "s7p08");
+		test(wordSenses, "s7p08");
 	}
 
 	@Test
@@ -287,7 +292,7 @@ public class TopicExtractionEval {
 		wordSenses.add("plate (dishware)");
 		wordSenses.add("plate (dishware)");
 		wordSenses.add("table (furniture)");
-		this.test(wordSenses, "s7p10");
+		test(wordSenses, "s7p10");
 	}
 
 	// 8
@@ -299,7 +304,7 @@ public class TopicExtractionEval {
 		wordSenses.add("laundry");
 		wordSenses.add("clothes dryer");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, "s8p01");
+		test(wordSenses, "s8p01");
 	}
 
 	@Test
@@ -320,7 +325,7 @@ public class TopicExtractionEval {
 		wordSenses.add("clothes dryer");
 		wordSenses.add("push-button");
 		wordSenses.add("clothes dryer");
-		this.test(wordSenses, "s8p06");
+		test(wordSenses, "s8p06");
 	}
 
 	// 9
@@ -334,7 +339,7 @@ public class TopicExtractionEval {
 		wordSenses.add("pond");
 		wordSenses.add("pond");
 		wordSenses.add("lawn");
-		this.test(wordSenses, "drone1.1");
+		test(wordSenses, "drone1.1");
 	}
 
 	@Test
@@ -346,7 +351,7 @@ public class TopicExtractionEval {
 		wordSenses.add("greenhouse");
 		wordSenses.add("pond");
 		wordSenses.add("lawn");
-		this.test(wordSenses, "drone1.2");
+		test(wordSenses, "drone1.2");
 	}
 
 	// 10
@@ -358,7 +363,7 @@ public class TopicExtractionEval {
 		wordSenses.add("carpet");
 		wordSenses.add("rattle (percussion instrument)");
 		wordSenses.add("rattle (percussion instrument)");
-		this.test(wordSenses, "mindstorm1.1");
+		test(wordSenses, "mindstorm1.1");
 	}
 
 	@Test
@@ -367,7 +372,7 @@ public class TopicExtractionEval {
 		wordSenses.add("line (geometry)");
 		wordSenses.add("carpet");
 		wordSenses.add("rattle (percussion instrument)");
-		this.test(wordSenses, "mindstorm1.2");
+		test(wordSenses, "mindstorm1.2");
 	}
 
 	// 11
@@ -378,7 +383,7 @@ public class TopicExtractionEval {
 		wordSenses.add("radiator");
 		wordSenses.add("degree (temperature)");
 		wordSenses.add("playlist");
-		this.test(wordSenses, "alexa1.1");
+		test(wordSenses, "alexa1.1");
 	}
 
 	@Test
@@ -386,7 +391,7 @@ public class TopicExtractionEval {
 		final List<String> wordSenses = new ArrayList<>();
 		wordSenses.add("playlist");
 		wordSenses.add("radiator");
-		this.test(wordSenses, "alexa1.2");
+		test(wordSenses, "alexa1.2");
 	}
 
 }

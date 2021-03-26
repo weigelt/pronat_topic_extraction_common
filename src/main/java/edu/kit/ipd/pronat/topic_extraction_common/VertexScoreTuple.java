@@ -1,11 +1,12 @@
-package edu.kit.ipd.parse.topic_extraction_common;
+package edu.kit.ipd.pronat.topic_extraction_common;
 
 import java.util.Objects;
 
-import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
+import edu.kit.ipd.pronat.topic_extraction_common.graph.WikiVertex;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 class VertexScoreTuple implements Comparable<VertexScoreTuple> {

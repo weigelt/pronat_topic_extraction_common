@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common;
+package edu.kit.ipd.pronat.topic_extraction_common;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -17,6 +17,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.kit.ipd.pronat.topic_extraction_common.graph.TopicGraph;
+import edu.kit.ipd.pronat.topic_extraction_common.graph.WikiVertex;
+import edu.kit.ipd.pronat.topic_extraction_common.ontology.CachedResourceConnector;
+import edu.kit.ipd.pronat.topic_extraction_common.ontology.DBPediaConnector;
+import edu.kit.ipd.pronat.topic_extraction_common.ontology.ResourceConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +29,10 @@ import edu.kit.ipd.parse.luna.graph.IGraph;
 import edu.kit.ipd.parse.luna.graph.INode;
 import edu.kit.ipd.parse.luna.graph.INodeType;
 import edu.kit.ipd.parse.luna.graph.Pair;
-import edu.kit.ipd.parse.topic_extraction_common.graph.TopicGraph;
-import edu.kit.ipd.parse.topic_extraction_common.graph.WikiVertex;
-import edu.kit.ipd.parse.topic_extraction_common.ontology.CachedResourceConnector;
-import edu.kit.ipd.parse.topic_extraction_common.ontology.DBPediaConnector;
-import edu.kit.ipd.parse.topic_extraction_common.ontology.ResourceConnector;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public class TopicExtractionCore {
@@ -309,8 +310,7 @@ public class TopicExtractionCore {
 		amountOfTopics = Math.min(amountOfTopics, maxTopics);
 
 		// get the correct connectivity processor
-		final VertexScoreProcessor vsProcessor = topicSelectionMethod
-				.getProcessor(topicGraph, amountOfTopics);
+		final VertexScoreProcessor vsProcessor = topicSelectionMethod.getProcessor(topicGraph, amountOfTopics);
 
 		// process scores with processor and sort selected vst in descending order
 		logger.debug("Start further processing of scores");

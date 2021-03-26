@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.ontology;
+package edu.kit.ipd.pronat.topic_extraction_common.ontology;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -12,8 +12,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.kit.ipd.parse.topic_extraction_common.ontology.OfflineDBPediaConnector;
-
+/**
+ * @author Jan Keim
+ * @author Sebastian Weigelt
+ *
+ */
 @Ignore
 public class OfflineDBPediaConnectorTest {
 	private static final Logger logger = LoggerFactory.getLogger(OfflineDBPediaConnectorTest.class);

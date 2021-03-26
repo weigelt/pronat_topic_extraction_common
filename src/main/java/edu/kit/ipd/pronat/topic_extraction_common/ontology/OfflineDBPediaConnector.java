@@ -1,4 +1,4 @@
-package edu.kit.ipd.parse.topic_extraction_common.ontology;
+package edu.kit.ipd.pronat.topic_extraction_common.ontology;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +21,7 @@ import org.apache.jena.util.FileManager;
 
 /**
  * @author Jan Keim
+ * @author Sebastian Weigelt
  *
  */
 public class OfflineDBPediaConnector extends DBPediaConnector {
