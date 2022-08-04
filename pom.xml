@@ -11,13 +11,6 @@
     <artifactId>topic_extraction_common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Topic Extraction Common</name>
-    <repositories>
-        <repository>
-            <id>ipdNexus-public-releases</id>
-            <name>IPD-Repository</name>
-            <url>http://bob.ipd.kit.edu/nexus/repository/maven-public-releases/</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
